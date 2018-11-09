@@ -1,0 +1,16 @@
+# Set the default behavior.
+* text=auto
+
+# Always LF line endings.
+*.js text eol=lf
+*.plist text eol=lf
+*.dat text eol=lf
+*.fs text eol=lf
+*.fragment text eol=lf
+*.vs text eol=lf
+*.vertex text eol=lf
+
+# Truly binary.
+*.png binary
+*.jpg binary
+*.ogg binary

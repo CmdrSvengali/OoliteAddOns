@@ -1,0 +1,16 @@
+(
+	"Lib_Main.js",
+	"Lib_2DCollision.js",
+	"Lib_Animator.js",
+	"Lib_BinSearch.js",
+	"Lib_Config.js",
+	"Lib_Crypt.js",
+	"Lib_EntityStrength.js",
+	"Lib_GUI.js",
+	"Lib_MissionCoord.js",
+	"Lib_Music.js",
+	"Lib_PAD.js",
+	"Lib_PAD_Events.js",
+	"Lib_Cubecode.js",
+	"Lib_Starmap.js"
+)

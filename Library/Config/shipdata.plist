@@ -1,0 +1,339 @@
+{
+// Templates
+	"lib_ms" = {
+		ai_type = "nullAI.plist";
+		condition_script = "lib_conditions.js";
+		energy_recharge_rate = 0.0;
+		fuel = 0;
+		is_template = yes;
+		max_energy = 2000;
+		model = "lib_key.dat";
+		roles = "lib_ms";
+	};
+// Inherit
+	"lib_ms_helper" = {
+		like_ship = "lib_ms";
+		name = "lib_ms_helper";
+		roles = "lib_ms_helper";
+	};
+	"lib_ms_helper_cut" = {
+		like_ship = "lib_ms";
+		materials = {
+			"lib_null.png" = {
+				fragment_shader = "lib_starmap.fs";
+				vertex_shader = "lib_fx_bb.vs";
+				textures = ("lib_blend0.png");
+				uniforms = {
+					emissionMap = { type=texture; value=0; };
+					Time = { binding="universalTime"; };
+					Lights = { binding="lightsActive"; bindToSubentity=yes; };
+					Energy = { binding="energy"; bindToSubentity=yes; };
+					MC = { type="vector"; value="1.0 1.0 1.0 1.0"; bindToSubentity=yes; };
+				};
+			};
+		};
+		name = "lib_ms_helper_cut";
+		roles = "lib_ms_helper_cut";
+	};
+	"lib_ms_helper12" = {
+		like_ship = "lib_ms";
+		materials = {
+			"lib_null.png" = {
+				fragment_shader = "lib_starmap.fs";
+				vertex_shader = "lib_fx_bb.vs";
+				textures = ("lib_blend0.png");
+				uniforms = {
+					emissionMap = { type=texture; value=0; };
+					Time = { binding="universalTime"; };
+					Lights = { binding="lightsActive"; bindToSubentity=yes; };
+				};
+			};
+		};
+		name = "lib_ms_helper12";
+		roles = "lib_ms_helper12";
+		subentities = (
+			{subentity_key = "lib_ms_helper_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_ms_helper_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_ms_helper_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_ms_helper_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_ms_helper_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_ms_helper_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_ms_helper_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_ms_helper_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_ms_helper_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_ms_helper_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_ms_helper_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_ms_helper_cut"; orientation = (1,0,0,0); position = (0,0,0);}
+		);
+	};
+	"lib_ms_helper3x" = {
+		like_ship = "lib_ms";
+		name = "lib_ms_helper3x";
+		roles = "lib_ms_helper3x";
+		subentities = (
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (-20,0,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,0,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (20,0,-1);}
+		);
+	};
+	"lib_ms_helper6x" = {
+		like_ship = "lib_ms";
+		name = "lib_ms_helper6x";
+		roles = "lib_ms_helper6x";
+		subentities = (
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (-50,0,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (-30,0,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (-10,0,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (10,0,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (30,0,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (50,0,-1);}
+		);
+	};
+	"lib_ms_helper12x" = {
+		like_ship = "lib_ms";
+		name = "lib_ms_helper12x";
+		roles = "lib_ms_helper12x";
+		subentities = (
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (-50,10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (-30,10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (-10,10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (10,10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (30,10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (50,10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (-50,-10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (-30,-10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (-10,-10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (10,-10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (30,-10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (50,-10,-1);}
+		);
+	};
+	"lib_ms_helper3y" = {
+		like_ship = "lib_ms";
+		name = "lib_ms_helper3y";
+		roles = "lib_ms_helper3y";
+		subentities = (
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,20,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,0,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,-20,-1);}
+		);
+	};
+	"lib_ms_helper4y" = {
+		like_ship = "lib_ms";
+		name = "lib_ms_helper4y";
+		roles = "lib_ms_helper4y";
+		subentities = (
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,30,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,-10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,-30,-1);}
+		);
+	};
+	"lib_ms_helper6y" = {
+		like_ship = "lib_ms";
+		name = "lib_ms_helper6y";
+		roles = "lib_ms_helper6y";
+		subentities = (
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,50,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,30,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,-10,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,-30,-1);},
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (0,-50,-1);}
+		);
+	};
+	"lib_ms_exhaust" = {
+		like_ship = "lib_ms";
+		materials = {
+			"lib_ms_exhaust.png" = {
+				emission_map = "lib_ms_exhaust.png";
+				shininess = 0;
+				fragment_shader = "lib_ms_exhaust.fs";
+				vertex_shader = "lib_ms_exhaust.vs";
+				textures = ({ name="lib_ms_exhaust.png"; repeat_s=true; repeat_t=true; });
+				uniforms = {
+					colorMap = { type=texture; value=0; };
+					Time = "timeElapsedSinceSpawn";
+					Energy = { binding="energy"; bindToSubentity=yes; };
+					Fuel = { binding="fuel"; bindToSubentity=yes; };
+					Dest = { binding="destination"; bindToSubentity=yes; normalized=false; };
+				};
+			};
+		};
+		model = "lib_ms_exhaust.dat";
+		name = "lib_ms_exhaust";
+		roles = "lib_ms_exhaust";
+		smooth = true;
+	};
+	"lib_ms_laser" = {
+		like_ship = "lib_ms";
+		energy_recharge_rate = 0.01;
+		materials = {
+			"lib_ms_laser.png" = {
+				fragment_shader = "lib_ms_laser.fs";
+				vertex_shader = "lib_ms_laser.vs";
+				uniforms = {
+					Fuel = { binding="fuel"; bindToSubentity=yes; };
+					Energy = { binding="energy"; bindToSubentity=yes; };
+				};
+			};
+		};
+		model = "lib_ms_laser.dat";
+		name = "lib_ms_laser";
+		roles = "lib_ms_laser";
+	};
+	"lib_ms_laserDist" = {
+		like_ship = "lib_ms";
+		materials = {
+			"lib_ms_laser.png" = {
+				fragment_shader = "lib_ms_laserDist.fs";
+				vertex_shader = "lib_ms_laserDist.vs";
+				uniforms = {
+					Time = { binding="universalTime"; };
+					Dest = { binding="destination"; bindToSubentity=yes; normalized=false; };
+					Energy = { binding="energy"; bindToSubentity=yes; };
+				};
+			};
+		};
+		model = "lib_ms_laser.dat";
+		name = "lib_ms_laserDist";
+		roles = "lib_ms_laserDist";
+	};
+	"lib_ms_moon" = {
+		like_ship = "lib_ms";
+		materials = {
+			"lib_moon.png" = {
+				shininess = 2;
+				fragment_shader = "lib_ms_moon.fs";
+				vertex_shader = "lib_ms_moon.vs";
+				textures = ({ name="lib_moon_cube.png"; cube_map=true; });
+				uniforms = {
+					colorMap = { type=texture; value=0; };
+					Scale = { type=float; value=2.0; };
+					Suncolor = { type=vector; value="1.0 0.967 0.5338"; normalized=false; };
+				};
+			};
+		};
+		model = "lib_moon.dat";
+		name = "lib_ms_moon";
+		roles = "lib_ms_moon";
+	};
+	"lib_ms_ov" = {
+		bounty = 10;
+		energy_recharge_rate = 0.8;
+		fuel = 16;
+		materials = {
+			"lib_overlay.png" = {
+				ambient_color = (0,0,0,0);
+				diffuse_color = (0,0,0,1);
+				emission_map = "lib_overlay.png";
+				emission_modulate_color = (1,1,1,1);
+				shininess = 0;
+				fragment_shader = "lib_ms_ov.fs";
+				vertex_shader = "lib_ms_ov.vs";
+				textures = ("lib_overlay.png");
+				uniforms = {
+					colorMap = { type=texture; value=0; };
+					Dest = { binding="destination"; bindToSubentity=yes; normalized=false; };
+					Energy = { binding="energy"; bindToSubentity=yes; };
+					Lights = { binding="lightsActive"; bindToSubentity=yes; };
+				};
+			};
+		};
+		max_energy = 10;
+		model = "lib_overlay.dat";
+		name = "lib_ms_ov";
+		roles = "lib_ms_ov";
+	};
+	"lib_ms_cubes" = {
+		like_ship = "lib_ms";
+		model = "lib_ms_cubes.dat";
+		name = "lib_ms_cubes";
+		roles = "lib_ms_cubes";
+		subentities = (
+			{subentity_key = "lib_ms_helper"; orientation = (1,0,0,0); position = (-42,4,-100);},
+			{subentity_key = "lib_ms_cube_a"; orientation = (1,0,0,0); position = (-30,30,10);},
+			{subentity_key = "lib_ms_cube_a"; orientation = (1,0,0,0); position = (0,30,10);},
+			{subentity_key = "lib_ms_cube_a"; orientation = (1,0,0,0); position = (30,30,10);},
+			{subentity_key = "lib_ms_cube_a"; orientation = (1,0,0,0); position = (-30,0,10);},
+			{subentity_key = "lib_ms_cube_a"; orientation = (1,0,0,0); position = (0,0,10);},
+			{subentity_key = "lib_ms_cube_a"; orientation = (1,0,0,0); position = (30,0,10);},
+			{subentity_key = "lib_ms_cube_a"; orientation = (1,0,0,0); position = (-30,-30,10);},
+			{subentity_key = "lib_ms_cube_a"; orientation = (1,0,0,0); position = (0,-30,10);},
+			{subentity_key = "lib_ms_cube_a"; orientation = (1,0,0,0); position = (30,-30,10);}
+		);
+	};
+	"lib_ms_cube_a" = {
+		like_ship = "lib_ms";
+		materials = {
+			"lib_ms_cube_a.png" = {
+				diffuse_color = (0.6,0.6,0.6,1);
+				emission_modulate_color = (0,0,0,0);
+				shininess = 0;
+			};
+		};
+		model = "lib_ms_cube_a.dat";
+		name = "lib_ms_cube_a";
+		roles = "lib_ms_cube_a";
+	};
+
+// Test
+	"lib_test" = {
+		accuracy = -2;
+		aft_eject_position = "0.0 -13.7652 -58.446607";
+		aft_weapon_type = "WEAPON_PULSE_LASER";
+		ai_type = "oolite-traderAI.js";
+		auto_ai = no;
+		auto_weapons = no;
+		bounty = 0;
+		cloak_automatic = no;
+		condition_script = "lib_conditions.js";
+		display_name = "Boa";
+		energy_recharge_rate = 3;
+		escorts = 2;
+		escort_roles = (
+			{ "role" = "escort"; min = 2; max = 2; }
+		);
+		exhaust = ("0.0 11.4 -53.6351 3.0 6.0 0.5");
+		forward_weapon_type = "WEAPON_PULSE_LASER";
+		frangible = 0;
+		fuel = 60;
+		has_cloaking_device = no;
+		has_ecm = no;
+		has_energy_bomb = no;
+		has_escape_pod = yes;
+		has_fuel_injection = no;
+		has_military_jammer = no;
+		has_military_scanner_filter = no;
+		has_scoop = yes;
+		has_shield_booster = no;
+		has_shield_enhancer = no;
+		is_external_dependency = yes;
+		is_template = no;
+		like_ship = "oolite_template_boa";
+		likely_cargo = 12;
+		max_cargo = 125;
+		max_energy = 450;
+		max_flight_pitch = 1;
+		max_flight_roll = 2.8;
+		max_flight_speed = 250;
+		max_missiles = 4;
+		missile_launch_position = "0.0 2.322665 56.223506";
+		missile_load_time = 4;
+		missile_role = "EQ_MISSILE";
+		missiles = 3;
+		model = "oolite_boa.dat";
+		name = "Boa";
+		port_weapon_type = "WEAPON_NONE";
+		roles = "lib_test";
+		scoop_position = "0.0 3.029881 49.396415";
+		script = "lib_test.js";
+		starboard_weapon_type = "WEAPON_NONE";
+		thrust = 40;
+		weapon_facings = 15;
+		weapon_position_aft = ("0.0 -0.894413 -51.6227");
+		weapon_position_forward = ("0.0 6.71333 54.7745");
+		weapon_position_port = ("-16.75005 4.88388 15.119505");
+		weapon_position_starboard = ("16.75005 4.88388 15.119505");
+	};
+}

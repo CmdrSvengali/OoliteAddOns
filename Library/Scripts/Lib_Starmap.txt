@@ -1,0 +1,25 @@
+// Display traders
+var a = system.filteredEntities(this,function(entity){return entity.isShip && !entity.isStation && !entity.owner && entity.isTrader;},player.ship),b=["PS","WP","P","ST","S"];
+for(var i=0;i<7;i++){if(a.length>i){b.push({map:"lib_starmap_i2.png",ent:a[i],col:5});}}worldScripts.Lib_Starmap._start({ini:b});
+
+// Display pirates
+var a = system.filteredEntities(this,function(entity){return entity.isShip && !entity.isStation && !entity.owner && entity.isPirate;},player.ship),b=["PS","WP","P","ST","S"];
+for(var i=0;i<7;i++){if(a.length>i){b.push({map:"lib_starmap_i3.png",ent:a[i],col:1});}}worldScripts.Lib_Starmap._start({ini:b});
+
+// Display police
+var a = system.filteredEntities(this,function(entity){return entity.isShip && !entity.isStation && !entity.owner && entity.isPolice;},player.ship),b=["PS","WP","P","ST","S"];
+for(var i=0;i<7;i++){if(a.length>i){b.push({map:"lib_starmap_i1.png",ent:a[i],col:4});}}worldScripts.Lib_Starmap._start({ini:b});
+
+// Default - Player, Witchpoint, Planet, Sun, MainStation, Hermit, Asteroid fields and secondary stations
+worldScripts.Lib_Starmap._start( { ini:["PS","WP","P","S","ST","H","AS","AS","AS","STG","STG","STG"] } );
+
+// Display fun
+var a = system.filteredEntities(this,function(entity){return entity.isShip && !entity.isStation && !entity.owner && entity.isTrader},player.ship),
+	c = system.filteredEntities(this,function(entity){return entity.isShip && !entity.isStation && !entity.owner && entity.isPirate && entity.group && entity.group.leader && entity.entityPersonality===entity.group.leader.entityPersonality;},player.ship),
+	b=["PS","WP","P","ST","S"];
+for(var i=0;i<15;i++){
+	if(b.length===12) break;
+	if((i&1) && a.length>i){b.push({map:"lib_starmap_i2.png",ent:a[i],col:5});}
+	else if(c.length>i){b.push({map:"lib_starmap_i2.png",ent:c[i],col:1});}
+}
+worldScripts.Lib_Starmap._start({ini:b});

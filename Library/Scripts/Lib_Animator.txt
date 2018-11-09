@@ -1,0 +1,190 @@
+Lib_Animator
+
+The Animator is a helper for animations on missionscreens.
+
+Methods:
+
+_start(obj)
+worldScripts.Lib_Animator._start(obj);
+
+Required members:
+obj.model		- String. Role
+obj.flow		- Array. Animation flow object.
+
+Optional members:
+obj.background	- String.
+obj.choices		- Object.
+obj.choicesKey	- String.
+obj.music		- String
+obj.overlay		- String.
+obj.screenID	- String.
+obj.title		- String.
+
+obj.fadeIn		- Bool. If used replaces obj.overlay.
+obj.corner		- Object. See below.
+obj.aPos		- Array.
+obj.aOris		- Array.
+obj.aBinds		- Array.
+obj.aProps		- Array.
+obj.bPos		- Array.
+obj.bOris		- Array.
+obj.bBinds		- Array.
+obj.bProps		- Array.
+obj.pilots		- Array. Sets texture, scale, position and display for character overlay.
+
+obj.caller		- String. worldScript name for callback and checkpoints.
+obj.callback	- String. Function to be called when user  
+obj.checkpoint	- String. Function to be called when 'check' gets processed.
+obj.custom		- Object. Holds custom Functions to be called when 'custom' gets processed.
+obj.hud			- String.
+
+obj.aSnd		- String.
+obj.bSnd		- String.
+obj.delta		- Number.
+
+
+obj.flow
+	
+	Array containing Arrays with at least 2 members (frame and cmd).
+		frame	- Number.
+		cmd		- String. Action command.
+		obj		- Object or String.
+		subCMD	- Array.
+
+Action commands:
+
+reset
+	Removes all Framecallbacks
+clr
+	Removes all Framecallbacks and resets 
+clrMov
+	Removes all object movement Framecallbacks (flight, rotate, speed, velocity, walk and zoom).
+kill
+	Removes mission.displayModel.
+
+rotw
+	Rotate entity in world space.
+	e, t, rx,ry,rz [, z, da, db]
+rot
+	Rotate entity in model space
+	e, t, rx,ry,rz [, z, da, db]
+rotTo
+	Rotate entity to target. Clears other rotations for this entity.
+	e, t, tg [, z, da, db, s]
+stopRot
+	Clear rotations for this entity.
+	e
+fly
+	e, t, mu,mr,mf, rx,ry,rz [,da, db, z, fu, en]
+flyTo
+	e, t, tg, s, mu,mr,mf [, da, db, z, fu, en]
+stopFly
+	e
+KI
+stopKI
+
+spd
+spdTo
+stopSpd
+velo
+	e, t, mu,mr,mf [,da, db, z, fu, en]
+veloTo
+	e, t, tg, mu,mr,mf [, da, db, z, fu, en]
+veloSet
+	e, velo
+stopVelo
+	e
+walk
+	e, t, st [,z, da, db]
+walkTo
+	
+stopWalk
+	e
+zoom
+	e, t, mz [, z, da, db]
+zoomTo
+	
+stopZoom
+	e
+prop
+	e, t, p, v [, da, db]
+matSet
+	e, mat, sha
+matMod
+	e, prop
+		i, p, v
+tex
+shadeSet
+	e, sha, rep
+shadeMod
+	e, tex, uni, val
+sun
+	Replaces shader with textureless sun shader.
+	e, id, scale, pos, col
+moon
+	Replaces shader with cubemapped moon shader.
+	e, id, scale, pos, col
+boom
+	Replaces shader with explosion shader.
+	e, id, scale, pos
+hyper
+	Replaces shader with hyperjump exit shader and plays sound.
+	e, id, scale, pos
+shoot
+	Sets energy for laser shader and plays sound.
+speak
+	Sets energy for character overlay and plays sound or adds message text.
+bind
+	e, t, tg [,fe, dist, swap]
+stopBind
+	e
+pos
+	e, pos
+posTo
+	e, tg [, off]
+posFl
+	e, f, tg [, off]
+ori
+	e, ori
+bg
+	n
+bgZoom
+	mw, mh [, n]
+bgZoomTo
+
+bgStop
+	none
+bgClr
+	none
+ov
+	n
+ovZoom
+	mw, mh [, n]
+ovStop
+	none
+ovClr
+	none
+ovFadeIn
+	t
+ovFadeOut
+	t
+corner
+	e, lv, x, y [, mz]
+txt
+	String.
+snd1
+	snd
+snd2
+	snd
+mus
+	snd
+custom
+	Calls custom function declared in the passed obj.custom.
+	String.
+goto
+	Goto animation frame time.
+	Number.
+check
+	Request action from obj.caller. Passes current frame time.
+	If returned value is a Number goto frame.
+	If no returned value (or false) stops the animation.

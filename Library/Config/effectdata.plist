@@ -1,0 +1,139 @@
+{
+// Requires shaders!
+	"lib_shield" = {
+		materials = {
+			"lib_null.png" = {
+				fragment_shader = "lib_shield.fs";
+				vertex_shader = "lib_simple.vs";
+				textures = ();
+				uniforms = {
+					Time = "universalTime";
+					Intensity = "shaderFloat1";
+					Tint = "shaderVector1";
+				};
+			};
+		};
+		model = "lib_shield.dat";
+		name = "Shield";
+	};
+	"lib_gimmick" = {
+		materials = {
+			"lib_null.png" = {
+				fragment_shader = "lib_simple.fs";
+				vertex_shader = "lib_simple.vs";
+				textures = ("lib_null.png");
+				uniforms = {
+					ColorMap = {type = texture; value = 0;};
+					Intensity = "shaderFloat1";
+					Tint = "shaderVector1";
+				};
+			};
+		};
+		model = "lib_shield.dat";
+		name = "Shield";
+	};
+	// Experimental - Do not use!
+	"lib_shields" = {
+		materials = {
+			"lib_moon.png" = {
+				fragment_shader = "lib_shields.fs";
+				vertex_shader = "lib_shields.vs";
+				textures = ({name="lib_perm3.png"; repeat_s = true; repeat_t = true;});
+				uniforms = {
+					noiseMap = {type = texture; value = 0;};
+					Time = "timeElapsedSinceSpawn";
+					Settings = "shaderVector1";
+				};
+			};
+		};
+		model = "lib_moon.dat";
+		name = "Shields";
+	};
+	// Experimental - Do not use!
+	"lib_shields2" = {
+		materials = {
+			"lib_moon.png" = {
+				fragment_shader = "lib_shields2.fs";
+				vertex_shader = "lib_simpleFlip.vs";
+				textures = ({name="lib_hyper.png"; repeat_s = true; repeat_t = true;});
+				uniforms = {
+					ColorMap = {type = texture; value = 0;};
+					Time = "universalTime";
+					Slide = "shaderFloat1";
+					Hex = "shaderFloat2";
+					Tint = "shaderVector1";
+				};
+			};
+		};
+		model = "lib_moon.dat";
+		name = "Shields";
+		script = "lib_shield.js";
+	};
+	"lib_starmap_cut" = {
+		materials = {
+			"lib_null.png" = {
+				fragment_shader = "lib_starmap2.fs";
+				vertex_shader = "lib_fx_bb.vs";
+				textures = ("lib_blend0.png");
+				uniforms = {
+					emissionMap = { type=texture; value=0; };
+					Time = { binding="universalTime"; };
+					Settings = { binding="shaderVector1"; bindToSubentity=yes; };
+					OnOff = { binding="shaderFloat1"; };
+					MC = { type="vector"; value="1.0 1.0 1.0 1.0"; bindToSubentity=yes; };
+				};
+			};
+		};
+		model = "lib_key.dat";
+		name = "lib_starmap_cut";
+	};
+	"lib_starmap12" = {
+		materials = {
+			"lib_null.png" = {
+				fragment_shader = "lib_starmap2.fs";
+				vertex_shader = "lib_fx_bb.vs";
+				textures = ("lib_blend0.png");
+				uniforms = {
+					emissionMap = { type=texture; value=0; };
+					Time = { binding="universalTime"; };
+					Settings = "shaderVector1";
+					OnOff = { binding="shaderFloat1"; };
+				};
+			};
+		};
+		model = "lib_key.dat";
+		name = "lib_starmap12";
+		script = "lib_starmap12.js";
+		subentities = (
+			{subentity_key = "lib_starmap_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_starmap_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_starmap_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_starmap_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_starmap_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_starmap_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_starmap_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_starmap_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_starmap_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_starmap_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_starmap_cut"; orientation = (1,0,0,0); position = (0,0,0);},
+			{subentity_key = "lib_starmap_cut"; orientation = (1,0,0,0); position = (0,0,0);}
+		);
+	};
+	"lib_starmap_wp" = {
+		materials = {
+			"lib_null.png" = {
+				fragment_shader = "lib_starmap2.fs";
+				vertex_shader = "lib_fx_bb.vs";
+				textures = ("lib_blend0.png");
+				uniforms = {
+					emissionMap = { type=texture; value=0; };
+					Time = { type=float; value=0.0; };
+					Settings = { type="vector"; value="0.0 0.0 0.0 0.0";};
+					OnOff = { type=float; value=0.0; };
+				};
+			};
+		};
+		model = "lib_key.dat";
+		name = "lib_starmap_wp";
+	};
+}

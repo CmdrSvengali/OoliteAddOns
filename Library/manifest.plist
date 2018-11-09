@@ -1,0 +1,24 @@
+{
+	author = "Svengali & BlackWolf";
+	category = "Misc";
+	description = "Library is a collection of useful snippets, helpers and resources to simplify some common tasks used by AddOns.";
+	//file_size = "4727740";
+	identifier = "oolite.oxp.Svengali.Library";
+	information_url = "http://wiki.alioth.net/index.php/Library";
+	license = "CC-by-nc-sa 4.0, partly MIT";
+	required_oolite_version = "1.88";
+	tags = (
+		"config",
+		"configuration",
+		"effects",
+		"helper",
+		"library",
+		"misc",
+		"parent",
+		"tools",
+		"sanity",
+		"shaders"
+	);
+	title = "Library";
+	version = "1.7";
+}
