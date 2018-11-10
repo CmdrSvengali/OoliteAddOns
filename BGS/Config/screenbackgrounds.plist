@@ -1,0 +1,16 @@
+{
+// Stick manager is missing - GUI_SCREEN_STICKMAPPER and GUI_SCREEN_STICKPROFILE
+	paused_docked_overlay	= "bgs_ov_paused.png"; // Problem, overwrites existing, won't get reset
+	paused_overlay			= "bgs_ov_paused.png"; // Problem, overwrites existing, won't get reset
+	intro					= "bgs_intro.png"; // no JS
+	keyboardsettings		= "bgs_fullscr.png"; // partly JS, no guiScreenChanged
+	load_save				= "bgs_options.png"; // partly JS, no guiScreenChanged
+	newgame					= "bgs_intro.png"; // no JS
+	oxz-manager				= "bgs_fullscr.png"; // no JS
+	settings				= "bgs_options.png"; // partly JS, no guiScreenChanged
+	shiplibrary				= "bgs_fullscr.png"; // partly JS, no guiScreenChanged
+
+	// Still necessary. JS only via overlay!
+	long_range_chart_mission = "lib_black.png";
+	short_range_chart_mission = "lib_black.png";
+}

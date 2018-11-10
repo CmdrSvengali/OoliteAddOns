@@ -1,0 +1,95 @@
+{
+// Requires shaders!
+	"bgs_fx" = {
+		is_external_dependency = yes;
+		is_template = yes;
+		model = "lib_cube.dat";
+		script = "lib_fx.js";
+	};
+// Inherit
+	"bgs_docking" = {
+		is_break_pattern = true;
+		like_effect = "bgs_fx";
+		materials = {
+			"lib_cube.png" = {
+				fragment_shader = "bgs_fx_dock.fs";
+				vertex_shader = "lib_fx_full.vs";
+				textures = ({name="bgs_docking_tunnel01.png"; repeat_s = true; repeat_t = true;});
+				uniforms = {
+					colorMap = {type = texture; value = 0;};
+					Time = "timeElapsedSinceSpawn";
+					Settings = "shaderVector1";
+					Tint = "shaderVector2";
+					Contrast = "shaderFloat1";
+				};
+			};
+		};
+	};
+	"bgs_docking_redux" = {
+		is_break_pattern = true;
+		like_effect = "bgs_fx";
+		materials = {
+			"lib_cube.png" = {
+				fragment_shader = "bgs_fx_dock_redux.fs";
+				vertex_shader = "lib_fx_full.vs";
+				textures = ({name="bgs_docking_tunnel01.png"; repeat_s = true; repeat_t = true;});
+				uniforms = {
+					colorMap = {type = texture; value = 0;};
+					Time = "timeElapsedSinceSpawn";
+					Settings = "shaderVector1";
+					Tint = "shaderVector2";
+				};
+			};
+		};
+	};
+	"bgs_exitWormhole" = {
+		like_effect = "bgs_fx";
+		materials = {
+			"lib_cube.png" = {
+				fragment_shader = "bgs_fx_wsexit.fs";
+				vertex_shader = "lib_fx_bb.vs";
+				textures = ({name = "lib_hyper.png"; repeat_s = true; repeat_t = true;});
+				uniforms = {
+					colorMap = {type = texture; value = 0;};
+					Time = "timeElapsedSinceSpawn";
+					Settings = "shaderVector1";
+					Tint = "shaderVector2";
+				};
+			};
+		};
+	};
+	"bgs_hyper" = {
+		is_break_pattern = true;
+		like_effect = "bgs_fx";
+		materials = {
+			"lib_cube.png" = {
+				fragment_shader = "bgs_fx_hyper.fs";
+				vertex_shader = "lib_fx_full.vs";
+				textures = ({name = "lib_hyper.png"; repeat_s = true; repeat_t = true;});
+				uniforms = {
+					colorMap = {type = texture; value = 0;};
+					Time = "timeElapsedSinceSpawn";
+					Settings = "shaderVector1";
+					Look = "shaderVector2";
+				};
+			};
+		};
+	};
+	"bgs_hyper_redux" = {
+		is_break_pattern = true;
+		like_effect = "bgs_fx";
+		materials = {
+			"lib_cube.png" = {
+				fragment_shader = "bgs_fx_hyper_redux.fs";
+				vertex_shader = "lib_fx_full.vs";
+				textures = ({name = "lib_hyper.png"; repeat_s = true; repeat_t = true;});
+				uniforms = {
+					colorMap = {type = texture; value = 0;};
+					Time = "timeElapsedSinceSpawn";
+					Settings = "shaderVector1";
+					Look = "shaderVector2";
+				};
+			};
+		};
+	};
+}

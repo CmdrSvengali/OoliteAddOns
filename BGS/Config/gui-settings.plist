@@ -1,0 +1,107 @@
+{
+	screen_title_color = "0.9 0.9 0.8";
+	screen_divider_color = "0.0 0.0 0.0 0.0";
+/*
+// Does not make sense to use yet, cause we can't change some hardcoded colors.
+	"default_text_color" = "0.8 0.8 0.7"; // new
+
+	"selected_row_background_color" = "0.06 0.12 0.16";
+	"selected_row_color" = "0.9 0.9 0.8";
+	"text_input_cursor_color" = "0.9 0.9 0.8";
+
+	"equipment_cash_color" = "0.9 0.9 0.8"; // new
+	"equipment_unavailable_color" = "darkGrayColor";
+	"equipment_scroll_color" = "0.24 0.55 0.3";
+	"equipment_option_color" = "0.48 0.55 0.6"; // new
+	"equipment_repair_color" = "orangeColor";
+	"equipment_description_color" = "0.24 0.55 0.3";
+	"equipment_laser_color" = "0.24 0.55 0.3";
+	"equipment_laser_fitted_color" = "0.0 0.6 0.0";
+//	"equipment_tabs" = (0,-360,-480);
+
+	"interface_heading_color" = "0.24 0.55 0.3"; // new
+	"interface_scroll_color" = "0.24 0.55 0.3"; // new
+	"interface_entry_color" = "0.48 0.55 0.6"; // new
+	"interface_description_color" = "0.24 0.55 0.3"; // new
+	"interface_none_color" = "darkGrayColor"; // new
+//	"interface_tabs" = (0,-480);
+
+	"shipyard_heading_color" = "0.24 0.55 0.3"; // new
+	"shipyard_scroll_color" = "0.24 0.55 0.3"; // new
+	"shipyard_entry_color" = "0.48 0.55 0.6"; // new
+	"shipyard_noship_color" = "darkGrayColor";
+	"shipyard_tradein_color" = "0.24 0.55 0.3"; // new
+	"shipyard_description_color" = "0.48 0.55 0.6"; // new
+//	"shipyard_tabs" = (0,-258,270,370,450);
+
+	"status_shipname_color" = "0.24 0.55 0.3"; // new
+	"status_data_color" = "0.68 0.75 0.8"; // new
+	"status_equipment_heading_color" = "0.24 0.55 0.3"; // new
+	"status_equipment_scroll_color" = "0.24 0.55 0.3";
+	"status_equipment_ok_color" = "0.48 0.55 0.6"; // new
+	"status_equipment_damaged_color" = "darkGrayColor";
+//	"status_tabs" = (20,160,290);
+	"status_prioritise_damaged" = 1;
+
+	"manifest_subhead_color" = "0.24 0.55 0.3";
+	"manifest_entry_color" = "0.48 0.55 0.6"; // new
+	"manifest_scroll_color" = "0.24 0.55 0.3";
+	"manifest_no_scroll_color" = "darkGrayColor";
+//	"manifest_tabs" = (0,256);
+
+	"chart_label_scale" = 1.0;
+	"chart_circle_scale" = 0.0017;
+	"chart_label_color" = "0.48 0.55 0.6"; // new
+	"chart_labelreachable_color" = "yellowColor";
+	"chart_range_color" = "0.24 0.55 0.3";
+	"chart_crosshair_color" = "0.24 0.55 0.3";
+	"chart_cursor_color" = "redColor";
+	"chart_info_marker_color" = "blueColor";
+	"chart_match_color" = "0.24 0.55 0.3";
+	"chart_match_label_color" = "cyanColor";
+	"chart_connection_color" = "0.25 0.25 0.25";
+	"chart_currentjumpstart_color" = "0.25 0.25 0.25 0.0";
+	"chart_currentjumpend_color" = "0.25 0.25 0.25 0.0";
+	"chart_route_short_color" = "yellowColor";
+	"chart_route_quick_color" = "cyanColor";
+
+	"chart_economy_0_color" = "1.0 1.0 0.0"; // Rich Ind
+	"chart_economy_1_color" = "0.875 1.0 0.0";
+	"chart_economy_2_color" = "0.75 1.0 0.0";
+	"chart_economy_3_color" = "0.625 1.0 0.0";
+	"chart_economy_4_color" = "0.5 1.0 0.0";
+	"chart_economy_5_color" = "0.375 1.0 0.0";
+	"chart_economy_6_color" = "0.25 1.0 0.0";
+	"chart_economy_7_color" = "0.125 1.0 0.0"; // Poor Ag
+
+	"chart_government_0_color" = "0.5 0.0 0.7"; // Anarchy
+	"chart_government_1_color" = "0.7 0.5 0.3";
+	"chart_government_2_color" = "0.0 1.0 0.3";
+	"chart_government_3_color" = "1.0 0.8 0.1";
+	"chart_government_4_color" = "1.0 0.0 0.0";
+	"chart_government_5_color" = "0.1 0.5 1.0";
+	"chart_government_6_color" = "0.7 0.7 0.7";
+	"chart_government_7_color" = "0.7 1.0 1.0"; // Corp State
+
+	"chart_tech_color" = "0.5 1.0 1.0";
+	"chart_traveltime_tabs" = (0,96,288);
+
+	"systemdata_facts_color" = "0.48 0.55 0.6"; // new
+	"systemdata_description_color" = "0.24 0.55 0.3";
+//	"systemdata_tabs" = (0,96,144);
+
+	"market_heading_color" = "0.24 0.55 0.3";
+	"market_commodity_color" = "0.48 0.55 0.6"; // new
+	"market_scroll_color" = "0.24 0.55 0.3";
+	"market_filtered_all_color" = "0.48 0.55 0.6"; // new
+	"market_filter_info_color" = "0.24 0.55 0.3";
+	"market_cash_color" = "0.9 0.9 0.8"; // new
+	"market_contracted_color" = "0.48 0.55 0.6"; // new
+	"market_description_color" = "0.48 0.55 0.6"; // new
+//	"market_tabs" = (0,137,187,267,321,431);
+
+	"docking_report_color" = "0.48 0.55 0.6"; // new
+	"docking_summary_color" = "0.48 0.55 0.6"; // new
+	"docking_continue_color" = "0.48 0.55 0.6"; // new
+*/
+}
