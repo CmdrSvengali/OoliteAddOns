@@ -1,0 +1,24 @@
+{
+	author = "Svengali";
+	category = "Ambience";
+	description = "The Galactic News Network.";
+	//download_url = "";
+	identifier = "oolite.oxp.Svengali.GNN";
+	information_url = "http://wiki.alioth.net/index.php/GNN";
+	license = "CC-by-nc-sa 4.0";
+	required_oolite_version = "1.88";
+	requires_oxps = (
+		{
+			identifier = "oolite.oxp.Svengali.Library";
+			version = "1.7";
+			description = "Depends on Library 1.7.";
+		}
+	);
+	tags = (
+		"ambience",
+		"child",
+		"news"
+	);
+	title = "GNN";
+	version = "1.1";
+}
