@@ -1,0 +1,364 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text-html; charset=utf-8">
+	<title>Keyconfig for Oolite</title>
+	<meta name="KCTitle" content="Keyconfig">
+	<meta name="KCVersion" content="1.7">
+	<meta name="KCOOVersion" content="1.82">
+	<meta name="KCRevision" content="r26">
+	<meta name="KCDate" content="2018-11-10">
+	<meta name="description" content="Keyconfig for Oolite">
+	<meta name="keywords" content="Oolite, Oolite-Tools">
+	<meta name="author" content="Svengali">
+	<meta name="robots" content="noindex, nofollow">
+	<link rel="icon" href="Data/ooliteicon.png" type="image/png">
+	<script type="text/javascript" src="Data/keyboard.js" charset="UTF-8"></script>
+	<link rel="stylesheet" type="text/css" href="Data/keyboard.css">
+</head>
+<body id="keyboardImage">
+	<img src="Data/ooliteicon.png" alt="Oolite" style="float:left;"><h3 style="padding-top:10px">Keyconfig for Oolite.<a href="#Help" class="anchor">&#x25BC;Help</a></h3>
+	<div id="JSCheck" style="background-color:#F08080">This tool needs JavaScript to work.</div>
+	<br>Compatibility for Oolite v:
+	<select id="Compatibility" name="Compatibility" onchange="compatibility(this.options[this.selectedIndex].text)">
+		<option>1.77</option>
+		<option>1.80</option>
+		<option>1.82</option>
+	</select> <small>(v1.82 is compatible up to v1.88)</small>
+	<br><br>
+	<button name="L177" class="keyboardButton" id="L177" title="Oolite v1.77 layout" onclick="showLayout(1)"><small>v1.77</small></button>
+	<button name="L180" class="keyboardButton" id="L180" title="Oolite v1.80 layout" onclick="showLayout(2)"><small>v1.80</small></button>
+	<button name="L182" class="keyboardButton" id="L182" title="Oolite v1.82 layout" onclick="showLayout(3)"><small>v1.82</small></button>
+	<button name="LAlter" class="keyboardButton" id="LAlter" title="Alternative layout" onclick="showLayout(4)"><small>Alternative A</small></button>
+	<button name="LAlterB" class="keyboardButton" id="LAlterB" title="Alternative layout" onclick="showLayout(5)"><small>Alternative B</small></button>
+	<button name="LBBC" class="keyboardButton" id="LBBC" title="BBC layout" onclick="showLayout(6)"><small>BBC</small></button>
+	<button name="LEmpty" class="keyboardButton" id="LEmpty" title="Empty layout" onclick="showLayout(7)"><small>Empty</small></button>
+	<br>
+	<table border="0" width="700px" id="contentFields">
+		<tr>
+			<th align="left">Entry</th>
+			<th align="left">Key</th>
+			<th align="left">Entry</th>
+			<th align="left">Key</th>
+		</tr>
+		<tr><td colspan="4" class="lcolor">Steering</td></tr>
+		<tr>
+			<td><span title="Roll anticlockwise." class="ooliteKey">key_roll_left</span></td>
+			<td><input type="text" id="key_roll_left" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Roll clockwise." class="ooliteKey">key_roll_right</span></td>
+			<td><input type="text" id="key_roll_right" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Pitch down (dive)." class="ooliteKey">key_pitch_forward</span></td>
+			<td><input type="text" id="key_pitch_forward" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Pitch up (climb)." class="ooliteKey">key_pitch_back</span></td>
+			<td><input type="text" id="key_pitch_back" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Yaw (turn) left." class="ooliteKey">key_yaw_left</span></td>
+			<td><input type="text" id="key_yaw_left" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Yaw (turn) right." class="ooliteKey">key_yaw_right</span></td>
+			<td><input type="text" id="key_yaw_right" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="When activated, the mouse becomes a virtual joystick (in full screen mode only). The left mouse button fires and the right re-centres your ship." class="ooliteKey">key_mouse_control</span></td>
+			<td><input type="text" id="key_mouse_control" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr><td colspan="4" class="lcolor">Nav</td></tr>
+		<tr>
+			<td><span title="Cycle backward through available compass targets (requires Advanced Space Compass). Introduced in v1.77." class="ooliteKey">key_prev_compass_mode</span></td>
+			<td><input type="text" id="key_prev_compass_mode" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Cycle forward through available compass targets (requires Advanced Space Compass)." class="ooliteKey">key_next_compass_mode</span></td>
+			<td><input type="text" id="key_next_compass_mode" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Cycles through the five magnification settings of the IFF Scanner." class="ooliteKey">key_scanner_zoom</span></td>
+			<td><input type="text" id="key_scanner_zoom" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Resets magnification of the IFF Scanner." class="ooliteKey">key_scanner_unzoom</span></td>
+			<td><input type="text" id="key_scanner_unzoom" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr><td colspan="4" class="lcolor">Fight</td></tr>
+		<tr>
+			<td><span title="Fire laser in current view (if installed)." class="ooliteKey">key_fire_lasers</span></td>
+			<td><input type="text" id="key_fire_lasers" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Toggle weapon lockdown (laser and turrets)." class="ooliteKey">key_weapons_online_toggle</span></td>
+			<td><input type="text" id="key_weapons_online_toggle" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Activate Ident System." class="ooliteKey">key_ident_system</span></td>
+			<td><input type="text" id="key_ident_system" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Deactivate Missile-targeting system." class="ooliteKey">key_untarget_missile</span></td>
+			<td><input type="text" id="key_untarget_missile" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Cycle forward between targets (requires Target System Memory Upgrade)." class="ooliteKey">key_next_target</span></td>
+			<td><input type="text" id="key_next_target" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Cycle backward between targets (requires Target System Memory Upgrade)." class="ooliteKey">key_previous_target</span></td>
+			<td><input type="text" id="key_previous_target" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Fire missile (if target locked) or mine." class="ooliteKey">key_launch_missile</span></td>
+			<td><input type="text" id="key_launch_missile" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Cycle through available missiles/mines." class="ooliteKey">key_next_missile</span></td>
+			<td><input type="text" id="key_next_missile" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Target incoming missiles." class="ooliteKey">key_target_incoming_missile</span></td>
+			<td><input type="text" id="key_target_incoming_missile" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Activate Missile-targeting system." class="ooliteKey">key_target_missile</span></td>
+			<td><input type="text" id="key_target_missile" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Activate ECM system. Only available when equipment installed." class="ooliteKey">key_ecm</span></td>
+			<td><input type="text" id="key_ecm" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Launch Escape Pod (requires an Escape Pod to be fitted)." class="ooliteKey">key_launch_escapepod</span></td>
+			<td><input type="text" id="key_launch_escapepod" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr><td colspan="4" class="lcolor">Speed</td></tr>
+		<tr>
+			<td><span title="Speed increase." class="ooliteKey">key_increase_speed</span></td>
+			<td><input type="text" id="key_increase_speed" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Speed decrease." class="ooliteKey">key_decrease_speed</span></td>
+			<td><input type="text" id="key_decrease_speed" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Torus Jumpdrive (cannot activate when close to planets or ships)." class="ooliteKey">key_jumpdrive</span></td>
+			<td><input type="text" id="key_jumpdrive" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Witchspace Fuel Injectors. Only available when equipment installed." class="ooliteKey">key_inject_fuel</span></td>
+			<td><input type="text" id="key_inject_fuel" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Galactic Hyperspace (requires Galactic Hyperdrive to be fitted)." class="ooliteKey">key_galactic_hyperspace</span></td>
+			<td><input type="text" id="key_galactic_hyperspace" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Hyperspace (requires a hyperspace-capable ship)." class="ooliteKey">key_hyperspace</span></td>
+			<td><input type="text" id="key_hyperspace" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr><td colspan="4" class="lcolor">Equip</td></tr>
+		<tr>
+			<td><span title="Cycle through selectable equipment (requires OXP-installed equipment)." class="ooliteKey">key_prime_equipment</span></td>
+			<td><input type="text" id="key_prime_equipment" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Activate selected equipment (requires OXP-installed equipment)." class="ooliteKey">key_activate_equipment</span></td>
+			<td><input type="text" id="key_activate_equipment" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Switch equipment mode (requires OXP-installed equipment with multiple modes). Introduced in v1.77." class="ooliteKey">key_mode_equipment</span></td>
+			<td><input type="text" id="key_mode_equipment" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Show the last received comms (inflight)." class="ooliteKey">key_comms_log</span></td>
+			<td><input type="text" id="key_comms_log" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Fast activation for equipment (requires OXP-installed equipment). Introduced in v1.80." class="ooliteKey">key_fastactivate_equipment_a</span></td>
+			<td><input type="text" id="key_fastactivate_equipment_a" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Fast activation for equipment (requires OXP-installed equipment). Introduced in v1.80." class="ooliteKey">key_fastactivate_equipment_b</span></td>
+			<td><input type="text" id="key_fastactivate_equipment_b" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Toggle cloaking device (requires the Cloaking Device). Removed in v1.80." class="ooliteKey">key_cloaking_device</span></td>
+			<td><input type="text" id="key_cloaking_device" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Fire Energy Bomb (requires Energy Bomb to be fitted). In v1.77+ only available in 'Strict Play'. Removed in v1.80." class="ooliteKey">key_energy_bomb</span></td>
+			<td><input type="text" id="key_energy_bomb" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Cycle Multi-Function-Display (requires HUD with MFDs). Introduced in v1.80." class="ooliteKey">key_cycle_mfd</span></td>
+			<td><input type="text" id="key_cycle_mfd" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Toggle Multi-Function-Display (requires HUD with MFDs). Introduced in v1.80." class="ooliteKey">key_switch_mfd</span></td>
+			<td><input type="text" id="key_switch_mfd" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr><td colspan="4" class="lcolor">Cargo</td></tr>
+		<tr>
+			<td><span title="Release selected commodities from cargo hold (inflight)." class="ooliteKey">key_dump_cargo</span></td>
+			<td><input type="text" id="key_dump_cargo" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Select commodities in your cargo hold (inflight)." class="ooliteKey">key_rotate_cargo</span></td>
+			<td><input type="text" id="key_rotate_cargo" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr><td colspan="4" class="lcolor">Docking</td></tr>
+		<tr>
+			<td><span title="Toggle autopilot (requires Docking Computer)." class="ooliteKey">key_autopilot</span></td>
+			<td><input type="text" id="key_autopilot" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Instant docking (requires Docking Computer)." class="ooliteKey">key_autodock</span></td>
+			<td><input type="text" id="key_autodock" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="The targeted station will give you clearance (or not). Carriers might stop when giving clearance." class="ooliteKey">key_docking_clearance_request</span></td>
+			<td><input type="text" id="key_docking_clearance_request" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Toggle music when Docking Computer is activated (requires Docking Computer)." class="ooliteKey">key_docking_music</span></td>
+			<td><input type="text" id="key_docking_music" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr><td colspan="4" class="lcolor">Views &amp; GUI</td></tr>
+		<tr>
+			<td><span title="Inflight view forward and launching from stations. Introduced in v1.80." class="ooliteKey">key_view_forward</span></td>
+			<td><input type="text" id="key_view_forward" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Inflight view aft and Options screens. Introduced in v1.80." class="ooliteKey">key_view_aft</span></td>
+			<td><input type="text" id="key_view_aft" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Inflight view port and Equipment/Shipyard screen. Introduced in v1.80." class="ooliteKey">key_view_port</span></td>
+			<td><input type="text" id="key_view_port" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Inflight view starboard and Interface screens. Introduced in v1.80." class="ooliteKey">key_view_starboard</span></td>
+			<td><input type="text" id="key_view_starboard" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Status Screen. Introduced in v1.80." class="ooliteKey">key_gui_screen_status</span></td>
+			<td><input type="text" id="key_gui_screen_status" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Charts Screen. Introduced in v1.80." class="ooliteKey">key_gui_chart_screens</span></td>
+			<td><input type="text" id="key_gui_chart_screens" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="System Data Screen. Introduced in v1.80." class="ooliteKey">key_gui_system_data</span></td>
+			<td><input type="text" id="key_gui_system_data" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Market Screen. Introduced in v1.80." class="ooliteKey">key_gui_market</span></td>
+			<td><input type="text" id="key_gui_market" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Cursor/GUI Left. Introduced in v1.80." class="ooliteKey">key_gui_arrow_left</span></td>
+			<td><input type="text" id="key_gui_arrow_left" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Cursor/GUI right. Introduced in v1.80." class="ooliteKey">key_gui_arrow_right</span></td>
+			<td><input type="text" id="key_gui_arrow_right" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Cursor/GUI Up. Introduced in v1.80." class="ooliteKey">key_gui_arrow_up</span></td>
+			<td><input type="text" id="key_gui_arrow_up" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Cursor/GUI down. Introduced in v1.80." class="ooliteKey">key_gui_arrow_down</span></td>
+			<td><input type="text" id="key_gui_arrow_down" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="In Galactic-Chart Mode: Additional system information while held down." class="ooliteKey">key_map_info</span></td>
+			<td><input type="text" id="key_map_info" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="In Galactic-Chart Mode: Selects your current system." class="ooliteKey">key_map_home</span></td>
+			<td><input type="text" id="key_map_home" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Additional system information while held down. Introduced in v1.80." class="ooliteKey">key_chart_highlight</span></td>
+			<td><input type="text" id="key_chart_highlight" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="In Galactic-Chart Mode: Hold down to activate, release to deactivate (requires Advanced Navigational Array)." class="ooliteKey">key_advanced_nav_array</span></td>
+			<td><input type="text" id="key_advanced_nav_array" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="In Contract Mode: Locate target system on Galactic-Chart. Removed in v1.80." class="ooliteKey">key_contract_info</span></td>
+			<td><input type="text" id="key_contract_info" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Cycle through external views." class="ooliteKey">key_custom_view</span></td>
+			<td><input type="text" id="key_custom_view" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+			<td><span title="Cycle filter. Introduced in v1.82." class="ooliteKey">key_market_filter_cycle</span></td>
+			<td><input type="text" id="key_market_filter_cycle" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Cycle sort filter. Introduced in v1.82." class="ooliteKey">key_market_sorter_cycle</span></td>
+			<td><input type="text" id="key_market_sorter_cycle" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr><td colspan="4" class="lcolor">Misc</td></tr>
+		<tr>
+			<td><span title="Pause game (not available on mission screens). Enables debug keys." class="ooliteKey">key_pausebutton</span></td>
+			<td><input type="text" id="key_pausebutton" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Displays frame rate, object- and collision-counter and player's coordinates." class="ooliteKey">key_show_fps</span></td>
+			<td><input type="text" id="key_show_fps" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="When activated, the hud toggles between hidden and visible. Useful for screen dumps (snapshot)." class="ooliteKey">key_hud_toggle</span></td>
+			<td><input type="text" id="key_hud_toggle" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Take a snapshot (image). Written to $HOME/oolite-saves." class="ooliteKey">key_snapshot</span></td>
+			<td><input type="text" id="key_snapshot" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Writes a detailed dump of your current target to the logfile. If no target is chosen, the player's state will be dumped. Only available in test releases" class="ooliteKey">key_dump_target_state</span></td>
+			<td><input type="text" id="key_dump_target_state" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Increase FOV (Field of View)" class="ooliteKey">key_inc_field_of_view</span></td>
+			<td><input type="text" id="key_inc_field_of_view" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Decrease FOV (Field of View)" class="ooliteKey">key_dec_field_of_view</span></td>
+			<td><input type="text" id="key_dec_field_of_view" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr><td colspan="4" class="lcolor">OXZ Manager</td></tr>
+		<tr>
+			<td><span title="Set filter. Introduced in v1.82." class="ooliteKey">key_oxzmanager_setfilter</span></td>
+			<td><input type="text" id="key_oxzmanager_setfilter" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+			<td><span title="Show additional info. Introduced in v1.82." class="ooliteKey">key_oxzmanager_showinfo</span></td>
+			<td><input type="text" id="key_oxzmanager_showinfo" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+		<tr>
+			<td><span title="Extract. Introduced in v1.82." class="ooliteKey">key_oxzmanager_extract</span></td>
+			<td><input type="text" id="key_oxzmanager_extract" size="2" maxlength="1" class="keyboardInput" style="font-weight:bold" onblur="userKey(this.id,this.value)" onkeyup="userCheckKey(this.id,this.value)"></td>
+		</tr>
+	</table>
+	<br>
+	<div id="ooliteMarkers">
+		<span style="background-color:#E0F0E0">&nbsp;&nbsp;&nbsp;</span> Ok.
+		<br>
+		<span style="background-color:#FFC0C0">&nbsp;&nbsp;&nbsp;</span> Conflict or required key not set.
+		<br>
+		<span style="background-color:#D8D8D8">&nbsp;&nbsp;&nbsp;</span> Backward compatibility.
+		<br>
+		<span style="background-color:#BF8360">&nbsp;&nbsp;&nbsp;</span> Clash with hardcoded key.
+		<br><br>
+		<img src="Data/keyboard.png" alt="Keyboard icon" height="13" width="28" border="0"> - click keyboard symbols to activate.
+		<br><br>
+		<br><br>
+		<div id="debug">
+			<button name="UpdDbg" id="UpdDbg" title="Update" onclick="fillHardcoded(); displayDbg();">Update</button><br>
+			<small>Hardcoded IDs:</small><br>
+			<input type="text" id="LayHardcoded" size="40" maxlength="100" style="font-weight:bold"><br>
+			<small>Regex:</small><br>
+			<input type="text" id="LayRegs" id="LayRegs" size="40" maxlength="100" style="font-weight:bold"><br>
+			<small>Maps:</small><br>
+			<textarea name="LayMaps" id="LayMaps" cols="40" rows="10"></textarea><br>
+			<small>VKI_titles:</small><br>
+			<textarea name="LayVKITitles" id="LayVKITitles" cols="40" rows="10"></textarea><br>
+			<small>VKI_deadkey:</small><br>
+			<textarea name="LayVKIDeadkey" id="LayVKIDeadkey" cols="40" rows="10"></textarea><br>
+			<small>KC_CurrentSet:</small><br>
+			<textarea name="LayCurSet" id="LayCurSet" cols="40" rows="10"></textarea><br>
+			<small>Build RegEx:</small><br>
+			<input type="text" name="LayBuildRegs" id="LayBuildRegs" size="40" maxlength="100" style="font-weight:bold"><button name="BuildReg" id="BuildReg" title="BuildReg" onclick="buildReg();"><small>Do</small></button><br>
+		</div>
+	</div>
+	<p class="comments">
+	Create the configuration and copy &amp; paste the following into your keyconfig.plist.<br>
+	Empty entries or unnecessary entries (based on your choosen compatibility) will be commented out.
+	</p>
+	<input type="button" name="createOutput" value="Create configuration" onclick="createOutput()"><span class="comments">&nbsp;&nbsp;Status: <span id="cfb">&nbsp;&nbsp;&nbsp;</span><span id="cfc">&nbsp;&nbsp;&nbsp;</span><span id="cfa">OK</span></span>
+	<br>
+	<textarea name="output" id="output" cols="80" rows="10"></textarea>
+	<br>
+	<div id="ooread">
+	<p class="comments">Or paste the content of a keyconfig.plist in the text area to continue working.</p>
+	<input type="button" name="readIn" id="readIn" value="Read configuration" onclick="readIn()">
+	</div>
+	<br>
+	<p class="lcolor" id="Help">Help<a href="#JSCheck" class="anchor">&#x25B2;Top</a></p>
+	<div id="keyboardUsage">
+	The virtual keyboard uses a US keyboard layout with the addition of the key between left shift and z
+	(a evil twin of the last key in the qwerty row). Additional layouts for French, German, Italian and Russion keyboards
+	are included. Generated output uses the US layout, so don't get confused.
+	<br><br>
+	The special keys Escape, Tab, Cursor keys (e.g. CR^ ), Function keys, Home, End, Delete, Insert, Page up, Page down or
+	the Numpad are only available through the virtual keyboard. For Mac-user some special keys are defined as symbols.
+	The left mouse button (MB LeftClick and MB DoubleClick) can be mapped as well.
+	<br><br>
+	<img src="Data/keyboard_ex04.png" alt="Virtual keyboard" style="float:left;width:164px;height:70px;" hspace="10">
+	The checkbox for <b>Assigned keys</b> toggles the coloring and override protection for already used or hardcoded keys
+	in Oolite (e.g. Q). Double-assignment of keys is allowed as long as their functionality doesn't collide, but if you really
+	want to do it switch it off. Additional possibilitites are available by activating the Legend/Options.
+	<br><br>
+	When done click the '<b>Create configuration</b>' button and copy the content into your keyconfig.plist.<br>
+	Note: Do not use Notepad under Windows - it may corrupt your file. Wordpad seems to work fine, but there are<br>
+	lots of other editors available (e.g. Notepad++). Oolite expects the file without BOM.
+	<br><br>
+	The easiest way is probably to create a folder named <i>User.oxp</i> in your AddOns directory, containing
+	one folder named <i>Config</i>. Create a file named <i>keyconfig.plist</i> there or copy Oolites <i>keyconfig.plist</i>
+	into it, then replace the content with the generated output.
+	<br><br>
+	<p class="lcolor">Hardcoded keys<a href="#JSCheck" class="anchor">&#x25B2;Top</a></p>
+	<div id="ListHardcoded" class="padLeft">
+		<div class="rowB"><span class="columnA">Key</span><span class="columnB">1.77</span><span class="columnC">1.80</span><span class="columnD">1.82</span><span class="columnA">Key</span><span class="columnB">1.77</span><span class="columnC">1.80</span><span class="columnD">1.82</span><br></div>
+	</div>
+	<br style="clear:left;">
+	* N0-N9 = Numberpad
+	</div>
+	<br>
+	<div style="text-align:right; padding:0px; border:0; margin:0px; color:#404040">
+		<hr style="border:solid #d0d0d0 0.5px; border-bottom:0px;">
+		<small><sup>(C) 2012-2018 - Svengali, 2018-11-10&nbsp;&nbsp;&nbsp;</sup></small><img src="Data/keyconfig_browsers.png" alt="Tested browsers" title="Chrome, Firefox, Opera, Safari and Internet Explorer">&nbsp;&nbsp;&nbsp;
+	</div>
+	<br>
+	<script language="JavaScript" type="text/javascript" src="Data/keyconfig.js"></script>
+</body>
+</html>
