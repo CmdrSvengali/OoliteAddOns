@@ -9,6 +9,8 @@
 *.fragment text eol=lf
 *.vs text eol=lf
 *.vertex text eol=lf
+*.css text eol=lf
+*.html text eol=lf
 
 # Truly binary.
 *.png binary
