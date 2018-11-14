@@ -133,7 +133,7 @@ this.shipDockedWithStation = function(st){
 		else m += " "+system.name+".";
 		this._add("LOGS.GENERIC.list",m);
 	}
-	if(player.ship.markedForFines) c.fined++;
+	if(player.ship.markedForFines) this.$config.fined++;
 };
 this.playerBoughtNewShip = function(){
 	this.$config.credits = player.credits;
