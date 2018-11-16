@@ -455,7 +455,7 @@ _libMain.prototype = {
 	/** Returns String with specified length in em.
 	* Truncated if width > max, otherwise filled up with space or chr.
 	*/
-	scrToWidth: function(str,max,chr,ret){
+	scrToWidth: function(str,max,chr,ret,rgt){
 		if(typeof str==='object' && str) str = str.toSource();
 		str = String(str);
 		var l = defaultFont.measureString(str),c,d;
@@ -478,11 +478,13 @@ _libMain.prototype = {
 					l += c;
 				} else {
 					if(max-l>this.spcsw){
-						str += this.spcs;
+						if(rgt) str = this.spcs+str;
+						else str += this.spcs;
 						l += this.spcsw;
 					} else {
 						if(max-l>this.spcw){
-							str += this.spc;
+							if(rgt) str = this.spc+str;
+							else str += this.spc;
 							l += this.spcw;
 						} else break;
 					}
