@@ -144,13 +144,14 @@ this._addInterface = function(){
 	});
 };
 this._showStart = function(id){
+	var f = this.$finder;
 	if(id==="Lib_MatFinder") this.$finder.hud = player.ship.hudHidden;
 	player.ship.hudHidden = true;
-	var c={},o=this._aid.objClone(this.$finder.pageHead);
+	var c={},o=this._aid.objClone(f.pageHead);
 	o.exitScreen = "GUI_SCREEN_INTERFACES";
-	for(var i=this.$finder.pageInd*24;i<this.$finder.pageInd*24+24;i++) if(this.$dataKeys.length>i+1) c[this.$dataKeys[i]] = this.$dataKeys[i];
+	for(var i=f.pageInd*24;i<f.pageInd*24+24;i++) if(this.$dataKeys.length>i+1) c[this.$dataKeys[i]] = this.$dataKeys[i];
 	o.choices = this._aid.objMerge(c,o.choices);
-	o.title += " ("+(this.$finder.pageInd+1)+"/"+this.$finder.pagesMax+")";
+	o.title += " ("+(f.pageInd+1)+"/"+f.pagesMax+")";
 	mission.runScreen(o,this._pageChoices);
 };
 this._pageChoices = function(choice){
@@ -197,7 +198,7 @@ this._extData = function(obj){
 	for(var i=0;i<mn.length;i++){
 		t1 = JSON.stringify(obj[mn[i]]);
 		t2 = t1.match(/[A-Za-z0-9_-]*.png/g);
-		if(t2.length) r = r.concat(t2);
+		if(t2 && t2.length) r = r.concat(t2);
 	}
 	return r;
 };
@@ -237,10 +238,11 @@ this._generatedChoices = function(choice){
 };
 this._setModelHead = function(){
 	var head = this._aid.objClone(this.$finder.modelHead),
+		cmd = this.$curMat.dataKey,
 		mcm = this.$finder.modelCurMod;
-	head.title = "Model: "+this.$curMat.dataKey+" - M:"+this.$curMat.matInd;
+	head.title = "Model: "+cmd+" - M:"+this.$curMat.matInd;
 	if(mcm) head.title += " "+this.$finder[mcm];
-	head.model = "["+this.$curMat.dataKey+"]";
+	head.model = "["+cmd+"]";
 	head.spinModel = this.$finder.modelSpin;
 	if(mcm){
 		switch(mcm){
@@ -250,8 +252,8 @@ this._setModelHead = function(){
 				head.choices.YMMC = "Change modifiers";
 				head.choices.YMMD = "Clear modifiers";
 				head.choices.YMME = "Confirm";
-				if(!this.$storedMats[this.$curMat.dataKey] || !this.$storedMats[this.$curMat.dataKey][this.$curMat.matIndName] ||
-					!this.$storedMats[this.$curMat.dataKey][this.$curMat.matIndName][this.$finder.modelMap]){
+				if(!this.$storedMats[cmd] || !this.$storedMats[cmd][this.$curMat.matIndName] ||
+					!this.$storedMats[cmd][this.$curMat.matIndName][this.$finder.modelMap]){
 						this._aid.scrChcUnsel(head.choices,"YMMC");
 						this._aid.scrChcUnsel(head.choices,"YMMD");
 				}
@@ -362,8 +364,8 @@ this._showModel = function(){
 			}
 			mki = matKeys[this.$curMat.matInd];
 			this.$curMat.matIndName = mki;
-		} else { // Shouldn't happen
-			log(this.name,"No materials found. Applying default material.");
+		} else {
+			log(this.name,"Applying default material.");
 			mat = this._aid.objClone(this.$defMat);
 			if(this.$storedMats[cdk]) mat = this.$storedMats[cdk];
 			else this.$storedMats[cdk] = mat;
@@ -435,32 +437,32 @@ this._parseMaterial = function(mat){
 };
 this._displayMaterial = function(mat){
 	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.diffuse_map ? mat.diffuse_map : "-"),16," ")+
-		this._aid.scrToWidth(""+(mat.ambient_color ? mat.ambient_color : "-"),15,0,0,1));
+		this._aid.scrToWidth(""+(mat.diffuse_map ? mat.diffuse_map : "-"),20," ")+
+		this._aid.scrToWidth(""+(mat.ambient_color ? mat.ambient_color : "-"),11,0,0,1));
 	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.emission_map ? mat.emission_map : "-"),16," ")+
-		this._aid.scrToWidth(""+(mat.diffuse_color ? mat.diffuse_color : "-"),15,0,0,1));
+		this._aid.scrToWidth(""+(mat.emission_map ? mat.emission_map : "-"),20," ")+
+		this._aid.scrToWidth(""+(mat.diffuse_color ? mat.diffuse_color : "-"),11,0,0,1));
 	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.illumination_map ? mat.illumination_map : "-"),16," ")+
-		this._aid.scrToWidth(""+(mat.emission_color ? mat.emission_color : "-"),15,0,0,1));
+		this._aid.scrToWidth(""+(mat.illumination_map ? mat.illumination_map : "-"),20," ")+
+		this._aid.scrToWidth(""+(mat.emission_color ? mat.emission_color : "-"),11,0,0,1));
 	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.emission_and_illumination_map ? mat.emission_and_illumination_map : "-"),16," ")+
-		this._aid.scrToWidth(""+(mat.emission_modulate_color ? mat.emission_modulate_color : "-"),15,0,0,1));
+		this._aid.scrToWidth(""+(mat.emission_and_illumination_map ? mat.emission_and_illumination_map : "-"),20," ")+
+		this._aid.scrToWidth(""+(mat.emission_modulate_color ? mat.emission_modulate_color : "-"),11,0,0,1));
 	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.normal_map ? mat.normal_map : "-"),16," ")+
-		this._aid.scrToWidth(""+(mat.illumination_modulate_color ? mat.illumination_modulate_color : "-"),15,0,0,1));
+		this._aid.scrToWidth(""+(mat.normal_map ? mat.normal_map : "-"),20," ")+
+		this._aid.scrToWidth(""+(mat.illumination_modulate_color ? mat.illumination_modulate_color : "-"),11,0,0,1));
 	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.normal_and_parallax_map ? mat.normal_and_parallax_map : "-"),16," ")+
-		this._aid.scrToWidth(""+(mat.specular_color ? mat.specular_color : "-"),15,0,0,1));
+		this._aid.scrToWidth(""+(mat.normal_and_parallax_map ? mat.normal_and_parallax_map : "-"),20," ")+
+		this._aid.scrToWidth(""+(mat.specular_color ? mat.specular_color : "-"),11,0,0,1));
 	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.specular_map ? mat.specular_map : "-"),16," ")+
-		this._aid.scrToWidth(""+(mat.specular_modulate_color ? mat.specular_modulate_color : "-"),15,0,0,1));
+		this._aid.scrToWidth(""+(mat.specular_map ? mat.specular_map : "-"),20," ")+
+		this._aid.scrToWidth(""+(mat.specular_modulate_color ? mat.specular_modulate_color : "-"),11,0,0,1));
 	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.gloss ? mat.gloss : "-"),16," ")+
-		this._aid.scrToWidth(""+(mat.parallax_bias ? mat.parallax_bias : "-"),15,0,0,1));
+		this._aid.scrToWidth(""+(mat.gloss ? mat.gloss : "-"),20," ")+
+		this._aid.scrToWidth(""+(mat.parallax_bias ? mat.parallax_bias : "-"),11,0,0,1));
 	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.shininess ? mat.shininess : "-"),16," ")+
-		this._aid.scrToWidth(""+(mat.parallax_scale ? mat.parallax_scale : "-"),15,0,0,1));
+		this._aid.scrToWidth(""+(mat.shininess ? mat.shininess : "-"),20," ")+
+		this._aid.scrToWidth(""+(mat.parallax_scale ? mat.parallax_scale : "-"),11,0,0,1));
 	for(var i=0;i<mat.MTX.length;i++) mission.addMessageText(this._aid.scrToWidth(mat.MTX[i],22," "));
 };
 this._modelChoices = function(choice){
@@ -554,7 +556,6 @@ this._modelChoices = function(choice){
 		case "YMMD": //Clear map modifiers
 			tr = this.$storedMats[this.$curMat.dataKey][this.$curMat.matIndName][this.$finder[this.$finder.modelCurMod]];
 			if(tr && tr.name) this.$storedMats[this.$curMat.dataKey][this.$curMat.matIndName][this.$finder[this.$finder.modelCurMod]] = tr.name;
-			//else delete this.$storedMats[this.$curMat.dataKey][this.$curMat.matIndName][this.$finder[this.$finder.modelCurMod]];
 			this._showModel();
 			break;
 		case "YMME": //Confirm
@@ -610,12 +611,8 @@ this._enterValue = function(){
 				for(var i=0;i<l;i+=2) exa += (i+1)+": "+this._aid.scrToWidth((l>i?tmp[i]:""),14," ")+(l>i+1?"  "+(i+2)+": "+this._aid.scrToWidth(tmp[i+1],14," "):"")+"\n";
 			} else exa += "None";
 			break;
-		case "modelSet":
-			// ex = 
-			break;
-		case "modelMapMod":
-			// ex = 
-			break;
+		case "modelSet": break;
+		case "modelMapMod": break;
 	}
 	if(ex) head.message += "\n\n"+expandMissionText(ex);
 	if(exa) head.message += "\n"+exa;
@@ -691,7 +688,7 @@ this._valueChoices = function(choice){
 								}
 								v[w] = this._aid.clamp(v[w],d.range[0],d.range[1]);
 							}
-							v = v.join(" ");
+							if(v) v = v.join(" ");
 						}
 					}
 				}
@@ -715,7 +712,7 @@ this._valueChoices = function(choice){
 						else if(this.$storedTex[dtk].indexOf(b)===-1) this.$storedTex[dtk].push(b);
 					}
 				}
-				if(typeof(tmp)==="object"){ // obj
+				if(typeof(tmp)==="object"){
 					tmp.name = b;
 					v = tmp;
 				} else v = b;
