@@ -1,0 +1,19 @@
+{
+	author = "Svengali";
+	category = "Misc";
+	description = "Helper to set and test materials entries.";
+	identifier = "oolite.oxp.Svengali.Lib_MatFinder";
+	information_url = "";
+	license = "CC-by-nc-sa 4.0";
+	required_oolite_version = "1.88";
+	requires_oxps = (
+		{
+			identifier = "oolite.oxp.Svengali.Library";
+			version = "1.7";
+			description = "Depends on Library 1.7.";
+		}
+	);
+	tags = ("materials");
+	title = "Lib_MatFinder";
+	version = "1.0";
+}
