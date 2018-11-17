@@ -631,7 +631,7 @@ this._valueChoices = function(choice){
 		switch(mcm){
 			case "modelCol":
 				if(choice[0]==="["){ // array
-					v = choice.replace(/[^\d,]/gi,"");
+					v = choice.replace(/[^\d,.]/gi,"");
 					v = v.split(",");
 					if(v.length!==3 && v.length!==4) v = null;
 					else {
