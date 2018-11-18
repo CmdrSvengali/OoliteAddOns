@@ -103,6 +103,7 @@ this.$finder = {
 		background:{name:"Lib_MatFinder_BG.png",height:512},
 		screenID:this.name
 	},
+	logCompact: false,
 	modelNoSub: false,
 	modelHighlightActive: false,
 	modelSpin: true,
@@ -502,7 +503,7 @@ this._modelChoices = function(choice){
 			if(this.$finder.modelCHCInd>4) this.$finder.modelCHCInd = 0;
 			this._showModel();
 			break;
-		case "XXLG":
+		case "XXLG": // to Latest.log
 			this._writeLog();
 			this._showModel();
 			break;
@@ -627,9 +628,25 @@ this._enterValue = function(){
 this._valueChoices = function(choice){
 	var a,b,c,clr,tmp,tmpb = null,v = null,
 		dtk = this.$curMat.dataKey,
+		min = this.$curMat.matIndName,
 		mcm = this.$finder.modelCurMod,
+		mm = this.$finder.modelMap,
+		mmm = this.$finder.modelMapMod,
 		d = this.$defsM[this.$finder[mcm]];
-	if(choice && choice!==""){
+	if(choice==="clr"){
+		if(mcm==="modelMapMod"){
+			if(this.$storedMats[dtk] && this.$storedMats[dtk][min] && this.$storedMats[dtk][min][mm]){
+				tmp = this.$storedMats[dtk][min][mm];
+				if(typeof(tmp)==="object"){
+					delete tmp[mmm];
+					if(Object.keys(tmp).length===1) tmp = tmp.name;
+					this.$storedMats[dtk][min][mm] = tmp;
+				}
+			}
+		} else {
+			delete this.$storedMats[dtk][min][this.$finder[mcm]];
+		}
+	} else if(choice && choice!==""){
 		switch(mcm){
 			case "modelCol":
 				if(choice[0]==="["){ // array
@@ -699,8 +716,8 @@ this._valueChoices = function(choice){
 				}
 				break;
 			case "modelMap":
-				if(this.$storedMats[dtk] && this.$storedMats[dtk][this.$curMat.matIndName] && this.$storedMats[dtk][this.$curMat.matIndName][this.$finder[mcm]]){
-					tmp = this.$storedMats[dtk][this.$curMat.matIndName][this.$finder[mcm]];
+				if(this.$storedMats[dtk] && this.$storedMats[dtk][min] && this.$storedMats[dtk][min][this.$finder[mcm]]){
+					tmp = this.$storedMats[dtk][min][this.$finder[mcm]];
 				}
 				if(choice.length<3){
 					a = parseInt(choice);
@@ -731,8 +748,8 @@ this._valueChoices = function(choice){
 				}
 				break;
 			case "modelMapMod":
-				if(this.$storedMats[dtk] && this.$storedMats[dtk][this.$curMat.matIndName] && this.$storedMats[dtk][this.$curMat.matIndName][this.$finder.modelMap]){
-					tmp = this.$storedMats[dtk][this.$curMat.matIndName][this.$finder.modelMap];
+				if(this.$storedMats[dtk] && this.$storedMats[dtk][min] && this.$storedMats[dtk][min][mm]){
+					tmp = this.$storedMats[dtk][min][mm];
 				}
 				switch(d.typ){
 					case "boolean":
@@ -751,13 +768,13 @@ this._valueChoices = function(choice){
 				}
 				if(b!=='undefined'){
 					if(typeof(tmp)==="string") tmp = {name:tmp};
-					tmp[this.$finder.modelMapMod] = b;
+					tmp[mmm] = b;
 					tmpb = tmp;
 				}
 				break;
 		}
-		if(v!==null) this.$storedMats[dtk][this.$curMat.matIndName][this.$finder[mcm]] = v;
-		if(tmpb!==null) this.$storedMats[dtk][this.$curMat.matIndName][this.$finder.modelMap] = tmpb;
+		if(v!==null) this.$storedMats[dtk][min][this.$finder[mcm]] = v;
+		if(tmpb!==null) this.$storedMats[dtk][min][mm] = tmpb;
 	} else {
 		if(mcm==="modelSet") clr = 1;
 	}
@@ -765,9 +782,9 @@ this._valueChoices = function(choice){
 	this._showModel();
 };
 this._writeLog = function(){
-	var m = this.$storedMats[this.$curMat.dataKey], // Get definition
-		mk = Object.keys(m), // [Hull,...]
-		ek,ev,fk,fv,t,tm,tp,tpm;
+	var m = this.$storedMats[this.$curMat.dataKey],
+		mk = Object.keys(m),
+		ek,ev,fk,fv,k,t,tm,tp;
 	this.$matLog = ["materials = {"];
 	for(var i=0;i<mk.length;i++){
 		this.$matLog.push("\""+mk[i]+"\""+" = {");
@@ -784,12 +801,12 @@ this._writeLog = function(){
 					else {
 						this.$matLog.push("{");
 						fk = Object.keys(m[mk[i]][ek[j]]);
-						for(var k=0;k<fk.length;k++){
+						for(k=0;k<fk.length;k++){
 							this.$matLog.push(fk[k]+" = ");
 							fv = m[mk[i]][ek[j]][fk[k]];
 							this.$matLog.push(fv+"; ");
 						}
-						this.$matLog.push("} ");
+						this.$matLog.push("}");
 					}
 					break;
 				case "Texture":
@@ -798,14 +815,14 @@ this._writeLog = function(){
 					else {
 						this.$matLog.push("{");
 						fk = Object.keys(m[mk[i]][ek[j]]);
-						for(var k=0;k<fk.length;k++){
+						for(k=0;k<fk.length;k++){
 							this.$matLog.push(fk[k]+" = ");
 							fv = m[mk[i]][ek[j]][fk[k]];
 							tm = this.$defsM[fk[k]].typ;
 							if(tm==="string") this.$matLog.push("\""+fv+"\"; ");
 							else this.$matLog.push(fv+"; ");
 						}
-						this.$matLog.push("} ");
+						this.$matLog.push("}");
 					}
 					break;
 				case "Float": this.$matLog.push(parseFloat(ev)); break;
@@ -817,6 +834,8 @@ this._writeLog = function(){
 		this.$matLog.push("}; ");
 	}
 	this.$matLog.push("};");
-	log(this.name,this.$matLog.join(""));
+	log(this.name,"Entry for "+this.$curMat.dataKey+":");
+	if(this.$finder.logCompact) log(this.name,this.$matLog.join("").replace(/\s/g,""));
+	else log(this.name,this.$matLog.join(""));
 };
 }).call(this);
