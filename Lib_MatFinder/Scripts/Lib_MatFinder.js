@@ -96,7 +96,7 @@ this.$finder = {
 	pageInd:0,
 	pagesMax:0,
 	modelHead:{
-		choices:{YYYB:"Back to main list"},
+		choices:{ZYYB:"Back to main list"},
 		initialChoicesKey: null,
 		title:"",
 		model:null,
@@ -290,6 +290,7 @@ this._setModelHead = function(){
 				head.choices.YYYE = "Toggle spin model";
 				head.choices.YYYF = "Toggle closeup";
 				head.choices.YYYG = "Next";
+				head.choices.XXLG = "Write to Latest.log";
 				break;
 			case 1:
 				head.choices.YYOA = "Rear";
@@ -476,7 +477,7 @@ this._modelChoices = function(choice){
 			} else this.$curMat.matInd = 0;
 			this._showModel();
 			break;
-		case "YYYB": // Back
+		case "ZYYB": // Back
 			this.$finder.modelCurMod = null;
 			this._showStart();
 			break;
@@ -499,6 +500,10 @@ this._modelChoices = function(choice){
 		case "YYYG": // Next
 			this.$finder.modelCHCInd++;
 			if(this.$finder.modelCHCInd>4) this.$finder.modelCHCInd = 0;
+			this._showModel();
+			break;
+		case "XXLG":
+			this._writeLog();
 			this._showModel();
 			break;
 		case "YYOA": // Orientations
@@ -758,5 +763,60 @@ this._valueChoices = function(choice){
 	}
 	if(clr) this.$finder.modelCurMod = null;
 	this._showModel();
+};
+this._writeLog = function(){
+	var m = this.$storedMats[this.$curMat.dataKey], // Get definition
+		mk = Object.keys(m), // [Hull,...]
+		ek,ev,fk,fv,t,tm,tp,tpm;
+	this.$matLog = ["materials = {"];
+	for(var i=0;i<mk.length;i++){
+		this.$matLog.push("\""+mk[i]+"\""+" = {");
+		ek = Object.keys(m[mk[i]]).sort();
+		for(var j=0;j<ek.length;j++){
+			this.$matLog.push(ek[j]+" = ");
+			t = this.$defsM[ek[j]];
+			ev = m[mk[i]][ek[j]];
+			switch(t.use){
+				case "Color":
+					tp = this._aid.typeGet(ev);
+					if(tp==="string") this.$matLog.push("\""+ev+"\"");
+					else if(tp==="array") this.$matLog.push("("+ev+")");
+					else {
+						this.$matLog.push("{");
+						fk = Object.keys(m[mk[i]][ek[j]]);
+						for(var k=0;k<fk.length;k++){
+							this.$matLog.push(fk[k]+" = ");
+							fv = m[mk[i]][ek[j]][fk[k]];
+							this.$matLog.push(fv+"; ");
+						}
+						this.$matLog.push("} ");
+					}
+					break;
+				case "Texture":
+					tp = this._aid.typeGet(ev);
+					if(tp==="string") this.$matLog.push("\""+ev+"\"");
+					else {
+						this.$matLog.push("{");
+						fk = Object.keys(m[mk[i]][ek[j]]);
+						for(var k=0;k<fk.length;k++){
+							this.$matLog.push(fk[k]+" = ");
+							fv = m[mk[i]][ek[j]][fk[k]];
+							tm = this.$defsM[fk[k]].typ;
+							if(tm==="string") this.$matLog.push("\""+fv+"\"; ");
+							else this.$matLog.push(fv+"; ");
+						}
+						this.$matLog.push("} ");
+					}
+					break;
+				case "Float": this.$matLog.push(parseFloat(ev)); break;
+				case "Int": this.$matLog.push(parseInt(ev)); break;
+				default: this.$matLog.push("null"); break;
+			}
+			this.$matLog.push("; ");
+		}
+		this.$matLog.push("}; ");
+	}
+	this.$matLog.push("};");
+	log(this.name,this.$matLog.join(""));
 };
 }).call(this);
