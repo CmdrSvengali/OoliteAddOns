@@ -7,7 +7,7 @@ To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-
 
 REQUIREMENTS:
 - Oolite 1.88
-- Library1.7
+- Library1.7.1
 
 PROBLEMS:
 In case of problems, please report it: http://aegidian.org/bb/viewtopic.php?f=4&t=18074

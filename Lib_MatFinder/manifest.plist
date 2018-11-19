@@ -9,8 +9,8 @@
 	requires_oxps = (
 		{
 			identifier = "oolite.oxp.Svengali.Library";
-			version = "1.7";
-			description = "Depends on Library 1.7.";
+			version = "1.7.1";
+			description = "Depends on Library 1.7.1.";
 		}
 	);
 	tags = ("materials");

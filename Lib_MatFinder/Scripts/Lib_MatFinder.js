@@ -33,7 +33,7 @@ this.$defsM = {
 	repeat_s: {def:false, typ:"boolean", use:"Modifier", nick:"rs"},
 	repeat_t: {def:false, typ:"boolean", use:"Modifier", nick:"rt"},
 	shininess: {def:128, typ:"number", use:"Int", range:[0,128]},
-	specular_color: {def:[0.0,0.0,0.0,1.0], typ:"array", use:"Color", range:[0,255]},
+	specular_color: {def:[0.2,0.2,0.2,1.0], typ:"array", use:"Color", range:[0,255]},
 	specular_map: {def:null, typ:"string", use:"Texture"},
 	specular_modulate_color: {def:[1.0,1.0,1.0,1.0], typ:"array", use:"Color", range:[0,255]},
 	texture_LOD_bias: {def:-0.25, typ:"number", use:"Modifier", range:[-1,1], nick:"ld"},
@@ -127,7 +127,7 @@ this.$finder = {
 };
 this.startUpComplete = function(){
 	this._aid = worldScripts.Lib_Main._lib;
-	this.$dataKeys = worldScripts.Lib_Main._lib.$ships; // Get all entries
+	this.$dataKeys = worldScripts.Lib_Main._lib.$ships;
 	this._addInterface();
 	this.$finder.pagesMax = Math.ceil(this.$dataKeys.length/24);
 	worldScripts.Lib_GUI.$IDRules.Lib_MatFinder = {mus:1};
@@ -195,7 +195,7 @@ this._getModelData = function(obj){
 };
 this._extData = function(obj){
 	var mn,t1,t2,r = [];
-	mn = Object.keys(obj); // material names
+	mn = Object.keys(obj);
 	for(var i=0;i<mn.length;i++){
 		t1 = JSON.stringify(obj[mn[i]]);
 		t2 = t1.match(/[A-Za-z0-9_-]*.png/g);
@@ -278,7 +278,7 @@ this._setModelHead = function(){
 				break;
 		}
 	} else {
-		if(typeof this.$curMat.sd.materials === "object"){
+		if(typeof(this.$curMat.sd.materials)==="object"){
 			this.$curMat.sdKeys = Object.keys(this.$curMat.sd.materials);
 			if(this.$curMat.sdKeys.length && this.$curMat.sdKeys.length>1){
 				head.choices.YYYA = "Next material";
@@ -341,7 +341,7 @@ this._showModel = function(){
 	mission.runScreen(head,this._modelChoices);
 	md = mission.displayModel;
 	md.orientation = this.$finder.modelOri;
-	if(this.$finder.modelCloseUp) md.position = [0,0,md.collisionRadius];
+	if(this.$finder.modelCloseUp) md.position = [0,0,md.collisionRadius+10];
 	if(md){
 		if(md.subEntities && md.subEntities.length){
 			var sub = md.subEntities.length;
@@ -602,12 +602,13 @@ this._modelChoices = function(choice){
 };
 this._enterValue = function(){
 	var head = this._aid.objClone(this.$finder.pageHead),
-		ex,exa,l,tmp, mcm = this.$finder.modelCurMod,
+		cur,ex,exa,exb,l,m,tmp,
+		mcm = this.$finder.modelCurMod,
 		dtk = this.$curMat.dataKey;
 	head.title = "Model: "+dtk+" - M:"+this.$curMat.matInd;
 	if(mcm) head.title += " "+this.$finder[mcm];
 	head.model = "["+dtk+"]";
-	head.message = expandMissionText("LIB_MATFS_"+this.$finder[mcm]);
+	m = expandMissionText("LIB_MATFS_"+this.$finder[mcm]);
 	switch(mcm){
 		case "modelCol": ex = "LIB_MATFS_ColorDesc"; break;
 		case "modelMap": ex = "LIB_MATFS_MapDesc"; exa = "";
@@ -620,8 +621,9 @@ this._enterValue = function(){
 		case "modelSet": break;
 		case "modelMapMod": break;
 	}
-	if(ex) head.message += "\n\n"+expandMissionText(ex);
-	if(exa) head.message += "\n"+exa;
+	if(ex) m += "\n\n"+expandMissionText(ex);
+	if(exa) m += "\n"+exa;
+	head.message = m;
 	head.textEntry = true;
 	mission.runScreen(head,this._valueChoices);
 };
