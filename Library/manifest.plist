@@ -20,5 +20,5 @@
 		"shaders"
 	);
 	title = "Library";
-	version = "1.7";
+	version = "1.7.1";
 }

@@ -1,7 +1,7 @@
-Library 1.7 for Oolite, Revision: 67
+Library 1.7.1 for Oolite, Revision: 68
 Copyright 2016-2018 by Svengali & BlackWolf.
 Licences: see below
-October 2018
+November 2018
 
 REQUIREMENTS:
 - Oolite v1.88
