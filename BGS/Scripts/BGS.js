@@ -1,6 +1,6 @@
 // jshint bitwise:false
 /* global Sound,SoundSource,Timer,clock,expandMissionText,missionVariables,player,system,worldScripts */
-/* BGS 2.5, (C) Svengali 2010-2018, License CC-by-nc-sa-4.0 */
+/* BGS 2.5.1, (C) Svengali 2010-2018, License CC-by-nc-sa-4.0 */
 (function(){
 "use strict";
 this.name = "BGS";
@@ -17,6 +17,8 @@ this.$pub = {
 };
 this.$BGS = {
 	chat:1,
+	chatEnt:0,
+	chatExpand:0,
 	count:1,
 	def:{engineAmbi:"[bgs_ambiEngine]",engineDown:"[bgs_fxEngineDown]",engineUp:"[bgs_fxEngineUp]"},
 	engine:1,
@@ -43,7 +45,7 @@ this.$BGS = {
 			Info:"^BGS_INFS"
 		},
 		EInt:{
-			E0:{Name:"$BGS.conf.E0",Def:0x1ff,Min:0,Max:0x3ff,Desc:["Chatter","Countdown","Engine","EngineAmbi","Jump","QMine","Jump FX","Exit FX","Dock FX","FX Redux"]},
+			E0:{Name:"$BGS.conf.E0",Def:0x1ff,Min:0,Max:0x7ff,Desc:["Chatter","Countdown","Engine","EngineAmbi","Jump","QMine","Jump FX","Exit FX","Dock FX","FX Redux","ChatExpand"]},
 			Info:"^BGS_INFE"
 		}
 	}
@@ -205,6 +207,7 @@ this.shipExitedWitchspace = function(){
 this.shipWillDockWithStation = function(station){
 	if(this.$BGS.dockFX) this._setDockTex(station,1);
 	this.shipDied();
+	this.$BGS.chatEnt = 0;
 };
 this.shipDied = function(){
 	this._clrTimer(1,1);
@@ -234,7 +237,7 @@ this._clrSNDs = function(){
 };
 this._doBGSTimer = function(){
 	if(!player.ship.isInSpace) return;
-	var ps = player.ship, b = this.$BGS, ox = b.conf, p = this.$pub, ch,cg,r;
+	var ps = player.ship, b = this.$BGS, ox = b.conf, p = this.$pub, ch,cg,r,a;
 	if(b.engine){
 		if(b.engineAmbi && 0<ps.speed-ox.jitter){
 			if(!this.$sndA.isPlaying) this.$sndA.playSound(p.engineAmbi);
@@ -252,16 +255,32 @@ this._doBGSTimer = function(){
 		}
 		b.curSpeed = ps.speed;
 	}
-	if(ps.withinStationAegis){
-		if(b.chat && !this.$sndC.isPlaying && clock.absoluteSeconds>b.seconds){
-			r = p.chat[Math.floor(Math.random()*p.chat.length)];
-			this.$sndC.sound = r;
-			this.$sndC.volume = 0.6;
-			this.$sndC.play();
-			b.seconds = clock.absoluteSeconds+this._aid.randXY(14,ox.chatPause);
+	if(b.chat){
+		if(b.chatExpand && !ps.withinStationAegis){
+			if(b.chatEnt && b.chatEnt.isValid){
+				if(ps.position.distanceTo(b.chatEnt)>25600) b.chatEnt = this._pseudoAegis();
+			} else b.chatEnt = this._pseudoAegis();
+		} else b.chatEnt = 0;
+		if(ps.withinStationAegis || b.chatEnt){
+			if(!this.$sndC.isPlaying && clock.absoluteSeconds>b.seconds){
+				r = p.chat[Math.floor(Math.random()*p.chat.length)];
+				this.$sndC.sound = r;
+				this.$sndC.volume = 0.6;
+				this.$sndC.play();
+				b.seconds = clock.absoluteSeconds+this._aid.randXY(14,ox.chatPause);
+			}
+		} else if(this.$sndC.isPlaying) this.$sndC.stop();
+	}
+};
+this._pseudoAegis = function(){
+	var a = system.entitiesWithScanClass("CLASS_STATION",player.ship,25600), r = 0;
+	for(var i=0;i<a.length;i++){
+		if(a[i].scriptInfo && a[i].scriptInfo.bgs_chatExpand){
+			r = a[i];
+			break;
 		}
-	} else if(this.$sndC.isPlaying) this.$sndC.stop();
-	return;
+	}
+	return r;
 };
 this._doWPTimer = function(){
 	var a = this.$BGS.CNT, s;
@@ -343,8 +362,8 @@ this._shipSpawned = function(ship){
 this._notification = function(){
 	var b = this.$BGS, a = b.conf.E0, c,
 		d = [[1,"chat",0],[2,"count",0],[4,"engine",0],[8,"engineAmbi",0],[16,"jump",0],
-			[64,"hypFX",1],[128,"hypFXExt",1],[256,"dockFX",1]];
-	for(var i=0;i<8;i++){
+			[64,"hypFX",1],[128,"hypFXExt",1],[256,"dockFX",1],[1024,"chatExpand",0]];
+	for(var i=0;i<9;i++){
 		c = d[i];
 		if(c[2]===1 && b.noShade) continue;
 		if((a&c[0])) b[c[1]] = 1;

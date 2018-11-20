@@ -2,7 +2,6 @@
 	author = "Svengali";
 	category = "Ambience";
 	description = "BackgroundSet - effects, ambient sounds and images.";
-	//download_url = "";
 	identifier = "oolite.oxp.Svengali.BGS";
 	information_url = "http://wiki.alioth.net/index.php/BGS";
 	license = "CC-by-nc-sa 4.0";
@@ -10,8 +9,8 @@
 	requires_oxps = (
 		{
 			identifier = "oolite.oxp.Svengali.Library";
-			version = "1.7";
-			description = "Depends on Library 1.7.";
+			version = "1.7.1";
+			description = "Depends on Library 1.7.1.";
 		}
 	);
 	tags = (
@@ -30,5 +29,5 @@
 		"visuals"
 	);
 	title = "BGS";
-	version = "2.5";
+	version = "2.5.1";
 }

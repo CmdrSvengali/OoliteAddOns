@@ -1,11 +1,11 @@
-BGS2.5 for Oolite
-Copyright 2010-2018 by P.A.Groove and Svengali.
+BGS2.5.1 for Oolite
+Copyright 2010-2018 by Pagroove, PhantorGorth, Thargoid, Tricky & Svengali
 Licences: see below
-October 2018
+November 2018
 
 REQUIREMENTS:
 - Oolite 1.88
-- Library1.7
+- Library1.7.1
 
 PROBLEMS:
 In case of problems, please report it:
