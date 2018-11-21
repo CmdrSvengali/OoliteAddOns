@@ -147,12 +147,13 @@ this._showScreen = function(obj){
 		spinModel: false,
 		title: ""
 	};
-	if(obj){
+	if(obj){ // Direct
 		if(this._aid.typeGet(obj)!=="object" || !obj.ID || !obj.Message) return false;
 		var news = this._setStandards(obj);
 		this._showInserted(head,news);
 	} else {
 		if(this.$snoop.fifo.length){
+			if(this.$snoop.fifo.length>1) head.choices.NEXT = "Next message";
 			what = this.$snoop.fifo[0];
 			if(what.ID==="GNN"){
 				switch(what.Message){
@@ -234,7 +235,7 @@ this._setModelDef = function(obj,em){
 };
 this._showInserted = function(head,obj){
 	head = this._setHead(head,obj);
-	mission.runScreen(head);
+	mission.runScreen(head,this._choices);
 	if(obj.Model) this._setModelDef(obj);
 	else this._setModelDef(obj,obj.Agency?obj.Agency:1);
 	return 1;
@@ -271,9 +272,15 @@ this._showInternal = function(head,gen){
 	head.message = "\n\n\n\n\n\n\n\n"+txt;
 	worldScripts.Lib_PAD.$config.last.news = txt;
 	if(!this.$snoop.audio) head.music = null;
-	mission.runScreen(head);
+	mission.runScreen(head,this._choices);
 	this._setModelDef({AutoPos:1},em);
 	return 1;
+};
+this._choices = function(choice){
+	switch(choice){
+		case "NEXT": worldScripts.GNN._showScreen(); break;
+		case "BACK":
+	}
 };
 this._updInterface = function(st){
 	if((st.isMainStation || (st.scriptInfo && st.scriptInfo.GNN) || st.hasNPCTraffic) && !system.isInterstellarSpace){
@@ -301,15 +308,25 @@ this._setStandards = function(obj){
 };
 this._insertNews = function(obj){
 	if(this._aid.typeGet(obj)!=="object" || !obj.ID || !obj.Message) return 1;
-	var news = this._setStandards(obj);
+	var news = this._setStandards(obj), no;
 	if(news.Delay){
-		news.Delay += clock.days;
-		this.$snoop.hot.push(news);
+		for(var i=0;i<this.$snoop.hot.length;i++){
+			if(this.$snoop.hot[i].ID===obj.ID && this.$snoop.hot[i].Message===obj.Message) no = 1;
+		}
+		if(!no){
+			news.Delay += clock.days;
+			this.$snoop.hot.push(news);
+		}
 	} else {
-		this.$snoop.fifo.push(news);
-		if(player.ship.docked){
-			this._resort();
-			this._updInterface(player.ship.dockedStation);
+		for(var i=0;i<this.$snoop.fifo.length;i++){
+			if(this.$snoop.fifo[i].ID===obj.ID && this.$snoop.fifo[i].Message===obj.Message) no = 1;
+		}
+		if(!no){
+			this.$snoop.fifo.push(news);
+			if(player.ship.docked){
+				this._resort();
+				this._updInterface(player.ship.dockedStation);
+			}
 		}
 	}
 	return 0;
