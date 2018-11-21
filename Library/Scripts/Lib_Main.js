@@ -671,6 +671,7 @@ this.startUp = this.playerEnteredNewGalaxy = function(){
 this.missionScreenOpportunity = function(){
 	delete this.missionScreenOpportunity;
 	this._lib._chkGlobal();
+	log(this.name,"P:"+Object.keys(player).length+" PS:"+Object.keys(player.ship).length+" PSS:"+Object.keys(player.ship.script).length+" G:"+Object.keys(global).length+" S:"+Object.keys(system).length);
 	this.shipWillExitWitchspace();
 };
 this.shipWillExitWitchspace = function(){
