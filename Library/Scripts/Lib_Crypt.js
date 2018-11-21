@@ -5,6 +5,28 @@
 "use strict";
 this.name = "Lib_Crypt";
 
+this.startUp = function(){
+	var c, crcTable = [];
+	for(var n=0;n<256;n++){
+		c = n;
+		for(var k=0;k<8;k++) c = ((c&1)?(0xEDB88320^(c>>>1)):(c>>>1));
+		crcTable[n] = c;
+	}
+	this.$CRCTable = crcTable;
+};
+
+/** _crc32() - Simple CRC with lookup table.
+* @str - String.
+* @return CRC
+*/
+this._crc32 = function(str){
+	var crc = 0 ^ (-1);
+	for(var i=0;i<str.length;i++){
+		crc = (crc>>>8)^this.$CRCTable[(crc^str.charCodeAt(i))&0xFF];
+	}
+	return (crc^(-1))>>>0;
+};
+
 /** _decrypt() - Decrypts string.
 	@str - String. Minimum length 6 chars.
 	@pwd - String. Password. Minimum length 4 chars.
