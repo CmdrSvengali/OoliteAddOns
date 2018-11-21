@@ -38,17 +38,21 @@ this.startUp = function(){
 	if(missionVariables.GNN){
 		infos = JSON.parse(missionVariables.GNN);
 		for(i=0;i<infos.unused.length;i++){
+			if(!infos.unused[i]) continue;
 			oxpID = infos.unused[i].ID;
 			if(worldScripts[oxpID]) k.fifo.push(infos.unused[i]);
 			else k.unused.push(infos.unused[i]);
 		}
 		for(i=0;i<infos.fifo.length;i++){
+			if(!infos.fifo[i]) continue;
 			oxpID = infos.fifo[i].ID;
 			if(worldScripts[oxpID]) k.fifo.push(infos.fifo[i]);
 			else k.unused.push(infos.fifo[i]);
 		}
 		k.nextNews = infos.nextNews;
-		k.hot = infos.hot;
+		for(i=0;i<infos.hot.length;i++){
+			if(infos.hot[i]) k.hot.push(infos.hot[i]);
+		}
 		k.audio = infos.audio;
 		k.maxDays = infos.maxDays;
 	}
@@ -70,7 +74,6 @@ this.playerWillSaveGame = function(){
 };
 this.shipWillDockWithStation = function(){
 	var i,obj,pass;
-	if(this.$snoop.hot.length) this.$snoop.hot = this._aid.arrOmit(this.$snoop.hot,null);
 	for(i=0;i<this.$doop.ext.length;i++){
 		pass = 0;
 		obj = this.$doop.ext[i];
@@ -116,8 +119,11 @@ this.dayChanged = function(newday){
 			if(worldScripts[obj.ID]) k.fifo.push(obj);
 			else k.unused.push(obj);
 			k.hot[i] = null;
+			k.hot = this._aid.arrOmit(k.hot,null);
+			i--;
 		}
 	}
+	if(k.hot.length) k.hot = this._aid.arrOmit(k.hot,null);
 	if(k.fifo.length<3){
 		if(newday>k.nextNews){
 			switch(x){
@@ -242,7 +248,7 @@ this._showInserted = function(head,obj){
 	return 1;
 };
 this._showInternal = function(head,gen){
-	var em,n,nstr,ov,r,txt,xy,extI;
+	var em,n,nstr,ov,r,txt,extI;
 	if(gen){
 		ov = "A1"+this._aid.randXY(1,4);
 		em = 1;
@@ -309,9 +315,9 @@ this._setStandards = function(obj){
 };
 this._insertNews = function(obj){
 	if(this._aid.typeGet(obj)!=="object" || !obj.ID || !obj.Message) return 1;
-	var news = this._setStandards(obj), no;
+	var news = this._setStandards(obj), no ,i;
 	if(news.Delay){
-		for(var i=0;i<this.$snoop.hot.length;i++){
+		for(i=0;i<this.$snoop.hot.length;i++){
 			if(this.$snoop.hot[i].ID===obj.ID && this.$snoop.hot[i].Message===obj.Message) no = 1;
 		}
 		if(!no){
@@ -319,7 +325,7 @@ this._insertNews = function(obj){
 			this.$snoop.hot.push(news);
 		}
 	} else {
-		for(var i=0;i<this.$snoop.fifo.length;i++){
+		for(i=0;i<this.$snoop.fifo.length;i++){
 			if(this.$snoop.fifo[i].ID===obj.ID && this.$snoop.fifo[i].Message===obj.Message) no = 1;
 		}
 		if(!no){
