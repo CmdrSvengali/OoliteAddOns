@@ -24,6 +24,7 @@ this.$doop = {
 			textures:["GNN_solar.png",{name:"lib_explode2.png",repeat_s:true,repeat_t:true}],uniforms:{colorMap:{type:"texture",value:0},
 			fxMap:{type:"texture",value:1},Time:"timeElapsedSinceSpawn"}}}}}
 	],
+	hud: false,
 	inf: {Name:"GNN",Display:"Config",Alive:"$doop.inf",
 		Bool:{B0:{Name:"$snoop.audio",Def:true,Desc:"Audio"}},
 		SInt:{S0:{Name:"$snoop.maxDays",Def:24,Min:12,Max:99,Desc:"Interval"},Info:"^GNN_INFS"}
@@ -132,7 +133,7 @@ this.dayChanged = function(newday){
 	}
 	if(player.ship.docked) this._updInterface(player.ship.dockedStation);
 };
-this._doScreen = function(){worldScripts.GNN._showScreen(); return;};
+this._doScreen = function(){worldScripts.GNN.$doop.hud = player.ship.hudHidden; player.ship.hudHidden = true; worldScripts.GNN._showScreen(); return;};
 this._showScreen = function(obj){
 	if(!player.ship.docked || system.isInterstellarSpace) return false;
 	var what,ret,ws;
@@ -279,7 +280,7 @@ this._showInternal = function(head,gen){
 this._choices = function(choice){
 	switch(choice){
 		case "NEXT": worldScripts.GNN._showScreen(); break;
-		case "BACK":
+		case "BACK": player.ship.hudHidden = worldScripts.GNN.$doop.hud;
 	}
 };
 this._updInterface = function(st){

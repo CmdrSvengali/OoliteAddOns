@@ -1,11 +1,11 @@
-GNN 1.1 for Oolite
+GNN 1.2 for Oolite
 Copyright 2009-2018 by DaddyHoggy, Drew, Disembodied and Svengali.
 Licences: see below
-October 2018
+November 2018
 
 REQUIREMENTS:
 - Oolite v1.88
-- Library v1.7
+- Library v1.7.1
 
 
 PROBLEMS:
