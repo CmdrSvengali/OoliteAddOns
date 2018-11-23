@@ -38,9 +38,9 @@ this.$defsM = {
 	specular_modulate_color: {def:[1.0,1.0,1.0,1.0], typ:"array", use:"Color", range:[0,255]},
 	texture_LOD_bias: {def:-0.25, typ:"number", use:"Modifier", range:[-1,1], nick:"ld"},
 	vertex_shader: {def:null, typ:"string", use:"VS"},
-	fragment_shader: {def:null, typ:"String", use:"FS"},
-	textures: {def:null, typ:"Array", use:"STexture"},
-	uniforms: {def:null, typ:"Object", use:"SBinds"}
+	fragment_shader: {def:null, typ:"string", use:"FS"},
+	textures: {def:null, typ:"array", use:"STexture"},
+	uniforms: {def:null, typ:"object", use:"SBinds"}
 };
 this.$defsC = {
 	named:{
@@ -76,7 +76,37 @@ this.$defsC = {
 		opacity: {def:1, typ:"Number", nick:"a", range:[0,255]}
 	}
 };
+this.$defsSub = {
+	allow_docking: {def:true, typ:"boolean", use:"SubEnt"},
+	allow_launching: {def:true, typ:"boolean", use:"SubEnt"},
+	bright_fraction: {def:0.5, typ:"number", use:"SubEnt"},
+	colors: {def:[[1,0,0,1]], typ:"array", use:"SubEnt"},
+	disallowed_docking_collides: {def:false, typ:"boolean", use:"SubEnt"},
+	dock_label: {def:"the docking bay", typ:"string", use:"SubEnt"},
+	fire_rate: {def:0.5, typ:"number", use:"SubEnt", range:[0.25,99]},
+	frequency: {def:2, typ:"number", use:"SubEnt"},
+	initially_on: {def:true, typ:"boolean", use:"SubEnt"},
+	is_dock: {def:1, typ:"number", use:"SubEnt", yep:1},
+	orientation: {def:{x:1,y:0,z:0,w:0}, typ:"quaternion", use:"SubEnt", yep:1},
+	phase: {def:0, typ:"number", use:"SubEnt"},
+	position: {def:{x:0,y:0,z:0}, typ:"vector", use:"SubEnt", yep:1},
+	size: {def:8, typ:"number", use:"SubEnt", range:[0,99]},
+	subentity_key: {def:"", typ:"string", use:"SubEnt", yep:1},
+	type: {def:"standard", typ:"string", use:"SubEnt", yep:1},
+	weapon_energy: {def:25, typ:"number", use:"SubEnt", range:[0,100]},
+	weapon_range: {def:6000, typ:"number", use:"SubEnt", range:[0,7500]}
+};
 this.$defMat = {};
+this.$posShader = {
+	vertex_shader: "Lib_Matfinder_pos.vs",
+	fragment_shader: "Lib_Matfinder_pos.fs",
+	textures: ["lib_null.png"],
+	uniforms: {
+		tex0: {type:"texture",value:0},
+		pos: {type:"vector",value:[0,0,0],normalized:false},
+		ori: {type:"vector",value:[0,0,0],normalized:false}
+	}
+};
 
 this.startUp = function(){
 	for(var p in this.$defsM){
@@ -102,6 +132,12 @@ this.$finder = {
 		model:null,
 		background:{name:"Lib_MatFinder_BG.png",height:512},
 		screenID:this.name
+	},
+	mode: "model", // shaderMat, posShader, shader, subentities, flashers
+	moveAmount: {
+		x: {ind:1,val:[100,10,1,0.1,0.01]},
+		y: {ind:1,val:[100,10,1,0.1,0.01]},
+		z: {ind:1,val:[100,10,1,0.1,0.01]}
 	},
 	logCompact: false,
 	modelNoSub: false,
@@ -208,6 +244,7 @@ this._showGenerate = function(){
 	head.title = "Model: "+this.$curMat.dataKey+" - M:"+this.$curMat.matInd;
 	head.model = "["+this.$curMat.dataKey+"]";
 	head.choices.GAAA = "Generate materials entry";
+	if(this.$curMat.sd.subentities) head.choices.GALS = "Write subentities to Latest.log";
 	head.message = expandMissionText("LIB_MATF_NOMAT");
 	head.background = {name:"lib_bg.png",height:512};
 	mission.runScreen(head,this._generateChoices);
@@ -215,6 +252,7 @@ this._showGenerate = function(){
 this._generateChoices = function(choice){
 	switch(choice){
 		case "GAAA": this._setMatName(); break;
+		case "GALS": this._writeLog(2); this._showGenerate(); break;
 		default: this._showStart();
 	}
 };
@@ -291,6 +329,7 @@ this._setModelHead = function(){
 				head.choices.YYYE = "Toggle spin model";
 				head.choices.YYYF = "Toggle closeup";
 				head.choices.YYYG = "Next";
+				// Add mode switch material, shader, subentities, flashers
 				head.choices.XXLG = "Write to Latest.log";
 				break;
 			case 1:
@@ -304,30 +343,45 @@ this._setModelHead = function(){
 				head.choices.YYYG = "Next";
 				break;
 			case 2:
-				head.choices.YYMA = "Change diffuse_map";
-				head.choices.YYMB = "Change emission_and_illumination_map";
-				head.choices.YYMC = "Change emission_map";
-				head.choices.YYMD = "Change illumination_map";
-				head.choices.YYME = "Change normal_and_parallax_map";
-				head.choices.YYMF = "Change normal_map";
-				head.choices.YYMG = "Change specular_map";
+				if(this.$finder.mode==="model"){
+					head.choices.YYMA = "Change diffuse_map";
+					head.choices.YYMB = "Change emission_and_illumination_map";
+					head.choices.YYMC = "Change emission_map";
+					head.choices.YYMD = "Change illumination_map";
+					head.choices.YYME = "Change normal_and_parallax_map";
+					head.choices.YYMF = "Change normal_map";
+					head.choices.YYMG = "Change specular_map";
+				}
+				if(this.$finder.mode==="posShader"){
+					head.coices.PSZA = "Increase Z";
+					head.coices.PSZB = "Decrease Z";
+					head.coices.PSZC = "Amount: "+this.$finder.moveAmount.z.val[this.$finder.moveAmount.z.ind];
+				}
 				head.choices.YYYG = "Next";
 				break;
 			case 3:
-				head.choices.YYCA = "Change ambient_color";
-				head.choices.YYCB = "Change diffuse_color";
-				head.choices.YYCC = "Change emission_color";
-				head.choices.YYCD = "Change emission_modulate_color";
-				head.choices.YYCE = "Change illumination_modulate_color";
-				head.choices.YYCF = "Change specular_color";
-				head.choices.YYCG = "Change specular_modulate_color";
+				if(this.$finder.mode==="model"){
+					head.choices.YYCA = "Change ambient_color";
+					head.choices.YYCB = "Change diffuse_color";
+					head.choices.YYCC = "Change emission_color";
+					head.choices.YYCD = "Change emission_modulate_color";
+					head.choices.YYCE = "Change illumination_modulate_color";
+					head.choices.YYCF = "Change specular_color";
+					head.choices.YYCG = "Change specular_modulate_color";
+				}
+				if(this.$finder.mode==="posShader"){
+				}
 				head.choices.YYYG = "Next";
 				break;
 			case 4:
-				head.choices.YYGA = "Set gloss";
-				head.choices.YYGB = "Set shininess";
-				head.choices.YYGC = "Set parallax_bias";
-				head.choices.YYGD = "Set parallax_scale";
+				if(this.$finder.mode==="model"){
+					head.choices.YYGA = "Set gloss";
+					head.choices.YYGB = "Set shininess";
+					head.choices.YYGC = "Set parallax_bias";
+					head.choices.YYGD = "Set parallax_scale";
+				}
+				if(this.$finder.mode==="posShader"){
+				}
 				head.choices.YYYG = "Next";
 				break;
 		}
@@ -375,18 +429,27 @@ this._showModel = function(){
 		}
 		newMat = this._parseMaterial(mat[mki]);
 		this._displayMaterial(newMat);
-		if(this.$finder.modelNoShade){
-			if(mat[mki].vertex_shader) delete mat[mki].vertex_shader;
-			if(mat[mki].fragment_shader) delete mat[mki].fragment_shader;
-			if(mat[mki].textures) delete mat[mki].textures;
-			if(mat[mki].uniforms) delete mat[mki].uniforms;
-		}
-		if(this.$finder.modelHighlightActive){
+		if(this.$finder.mode==="posShader"){
 			high = this._aid.objClone(mat);
-			high[mki].emission_color = [1,0,0,1];
-			high[mki].emission_map = null;
+			high[mki].vertex_shader = this.$posShader.vertex_shader;
+			high[mki].fragment_shader = this.$posShader.fragment_shader;
+			high[mki].textures = this.$posShader.textures;
+			high[mki].uniforms = this.$posShader.uniforms;
 			md.setMaterials(high,{});
-		} else md.setMaterials(mat,{});
+		} else {
+			if(this.$finder.modelNoShade){
+				if(mat[mki].vertex_shader) delete mat[mki].vertex_shader;
+				if(mat[mki].fragment_shader) delete mat[mki].fragment_shader;
+				if(mat[mki].textures) delete mat[mki].textures;
+				if(mat[mki].uniforms) delete mat[mki].uniforms;
+			}
+			if(this.$finder.modelHighlightActive){
+				high = this._aid.objClone(mat);
+				high[mki].emission_color = [1,0,0,1];
+				high[mki].emission_map = null;
+				md.setMaterials(high,{});
+			} else md.setMaterials(mat,{});
+		}
 	}
 };
 this._parseMaterial = function(mat){
@@ -504,7 +567,7 @@ this._modelChoices = function(choice){
 			this._showModel();
 			break;
 		case "XXLG": // to Latest.log
-			this._writeLog();
+			this._writeLog(1);
 			this._showModel();
 			break;
 		case "YYOA": // Orientations
@@ -783,19 +846,47 @@ this._valueChoices = function(choice){
 	if(clr) this.$finder.modelCurMod = null;
 	this._showModel();
 };
-this._writeLog = function(){
-	var m = this.$storedMats[this.$curMat.dataKey],
-		mk = Object.keys(m),
+this._writeLog = function(mode){
+	var m,where,sep;
+	switch(mode){
+		case 1: m = this.$storedMats[this.$curMat.dataKey]; where = "$defsM"; this.$matLog = ["materials = {"]; break;
+		case 2: m = this.$curMat.sd.subentities; where = "$defsSub"; this.$matLog = ["subentities = ("]; break;
+	}
+	var mk = Object.keys(m),
 		ek,ev,fk,fv,k,t,tm,tp;
-	this.$matLog = ["materials = {"];
 	for(var i=0;i<mk.length;i++){
-		this.$matLog.push("\""+mk[i]+"\""+" = {");
-		ek = Object.keys(m[mk[i]]).sort();
+		switch(mode){
+			case 1: this.$matLog.push("\""+mk[i]+"\""+" = {"); ek = Object.keys(m[mk[i]]).sort(); break;
+			case 2: this.$matLog.push("{"); ek = Object.keys(m[mk[i]]); break;
+		}
 		for(var j=0;j<ek.length;j++){
-			this.$matLog.push(ek[j]+" = ");
-			t = this.$defsM[ek[j]];
+			t = this[where][ek[j]];
 			ev = m[mk[i]][ek[j]];
+			if(mode===2 && !t.yep){
+				if(t.def==ev) continue;
+				if(t.typ==="array" && t.def.join("")===ev.join("")) continue;
+			}
+			this.$matLog.push(ek[j]+" = ");
 			switch(t.use){
+				case "SubEnt":
+					tp = this._aid.typeGet(ev);
+					switch(tp){
+						case "string": this.$matLog.push("\""+ev+"\""); break;
+						case "number": this.$matLog.push(this._aid.toPrec(ev,4)); break;
+						case "array": // colors
+							this.$matLog.push("(");
+							for(k=0;k<ev.length;k++){
+								this.$matLog.push("("+this._aid.toPrec(ev[k][0],4)+","+this._aid.toPrec(ev[k][1],4)+","+this._aid.toPrec(ev[k][2],4)+","+this._aid.toPrec(ev[k][3],4)+")");
+								if(k<ev.length-1) this.$matLog.push(",");
+							}
+							this.$matLog.push(")");
+							break;
+						case "object": // position, orientation
+							if(t.typ==="vector") this.$matLog.push("("+this._aid.toPrec(ev.x,4)+","+this._aid.toPrec(ev.y,4)+","+this._aid.toPrec(ev.z,4)+")");
+							if(t.typ==="quaternion") this.$matLog.push("("+this._aid.toPrec(ev.w,4)+","+this._aid.toPrec(ev.x,4)+","+this._aid.toPrec(ev.y,4)+","+this._aid.toPrec(ev.z,4)+")");
+							break;
+					}
+					break;
 				case "Color":
 					tp = this._aid.typeGet(ev);
 					if(tp==="string") this.$matLog.push("\""+ev+"\"");
@@ -827,15 +918,22 @@ this._writeLog = function(){
 						this.$matLog.push("}");
 					}
 					break;
-				case "Float": this.$matLog.push(parseFloat(ev)); break;
-				case "Int": this.$matLog.push(parseInt(ev)); break;
+				case "Float": this.$matLog.push(this._aid.toPrec(ev,4)); break;
+				case "Int": this.$matLog.push(this._aid.toPrec(ev,4)); break;
 				default: this.$matLog.push("null"); break;
 			}
 			this.$matLog.push("; ");
 		}
-		this.$matLog.push("}; ");
+		if(mode===1) this.$matLog.push("}; ");
+		else if(mode===2){
+			if(i<mk.length-1) this.$matLog.push("}, ");
+			else this.$matLog.push("} ");
+		}
 	}
-	this.$matLog.push("};");
+	switch(mode){
+		case 1: this.$matLog.push("};"); break;
+		case 2: this.$matLog.push(");"); break;
+	}
 	log(this.name,"Entry for "+this.$curMat.dataKey+":");
 	if(this.$finder.logCompact) log(this.name,this.$matLog.join("").replace(/\s/g,""));
 	else log(this.name,this.$matLog.join(""));

@@ -1,4 +1,4 @@
-Lib_MatFinder1.0 for Oolite
+Lib_MatFinder1.1 for Oolite
 Copyright 2016-2018 Svengali.
 Licence: CC-by-nc-sa 4.0
 Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Unported License.
