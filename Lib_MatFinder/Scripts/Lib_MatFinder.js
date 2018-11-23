@@ -133,8 +133,16 @@ this.$finder = {
 		background:{name:"Lib_MatFinder_BG.png",height:512},
 		screenID:this.name
 	},
-	mode: "posShader", // model (default), shaderMat, posShader, shader, subentities, flashers
+	mode: "model", // model (default), shaderMat, posShader, shader, subentities, flashers
+	modeInd: 0,
+	modes: ["model","posShader"],
+	modeNames: ["Materials","Positions"],
 	moveAmount: {
+		x: {ind:1,val:[100,10,1,0.1,0.01]},
+		y: {ind:1,val:[100,10,1,0.1,0.01]},
+		z: {ind:1,val:[100,10,1,0.1,0.01]}
+	},
+	oriAmount: {
 		x: {ind:1,val:[100,10,1,0.1,0.01]},
 		y: {ind:1,val:[100,10,1,0.1,0.01]},
 		z: {ind:1,val:[100,10,1,0.1,0.01]}
@@ -147,6 +155,8 @@ this.$finder = {
 	modelSpin: true,
 	modelNoShade: true,
 	modelCloseUp: false,
+	modelCloseUpInd: 0,
+	modelCloseUps: [0,10,30,50,100],
 	modelCHCInd: 0,
 	modelCurMod: null,
 	modelOri: [0,0,1,0],
@@ -326,12 +336,11 @@ this._setModelHead = function(){
 		}
 		switch(this.$finder.modelCHCInd){
 			case 0:
-				head.choices.YYYC = "Toggle subentities";
-				head.choices.YYYD = "Toggle highlite";
-				head.choices.YYYE = "Toggle spin model";
-				head.choices.YYYF = "Toggle closeup";
+				head.choices.YYYC = "Subentities: "+(!this.$finder.modelNoSub);
+				head.choices.YYYD = "Mode: "+this.$finder.modeNames[this.$finder.modeInd];
+				head.choices.YYYE = "Spin model: "+this.$finder.modelSpin;
+				head.choices.YYYF = "Closeup: "+(this.$finder.modelCloseUp?" :"+this.$finder.modelCloseUps[this.$finder.modelCloseUpInd]:"Off");
 				head.choices.YYYG = "Next";
-				// Add mode switch material, shader, subentities, flashers
 				head.choices.XXLG = "Write to Latest.log";
 				break;
 			case 1:
@@ -406,7 +415,7 @@ this._showModel = function(){
 	mission.runScreen(head,this._modelChoices);
 	md = mission.displayModel;
 	md.orientation = this.$finder.modelOri;
-	if(this.$finder.modelCloseUp) md.position = [0,0,md.collisionRadius+10];
+	if(this.$finder.modelCloseUp) md.position = [0,0,md.collisionRadius+this.$finder.modelCloseUps[this.$finder.modelCloseUpInd]];
 	if(md){
 		if(md.subEntities && md.subEntities.length){
 			var sub = md.subEntities.length;
@@ -570,7 +579,10 @@ this._modelChoices = function(choice){
 			this._showModel();
 			break;
 		case "YYYD": // Toggle Highlight
-			this.$finder.modelHighlightActive = !this.$finder.modelHighlightActive;
+			this.$finder.modeInd++;
+			if(this.$finder.modeInd>1) this.$finder.modeInd = 0;
+//			this.$finder.modelHighlightActive = !this.$finder.modelHighlightActive;
+			this.$finder.mode = this.$finder.modes[this.$finder.modeInd];
 			this._showModel();
 			break;
 		case "YYYE": // Toggle Spin
@@ -578,7 +590,9 @@ this._modelChoices = function(choice){
 			this._showModel();
 			break;
 		case "YYYF": // Toggle closeup
-			this.$finder.modelCloseUp = !this.$finder.modelCloseUp;
+			this.$finder.modelCloseUpInd++;
+			if(this.$finder.modelCloseUpInd>4) this.$finder.modelCloseUpInd = 0;
+			this.$finder.modelCloseUp = this.$finder.modelCloseUps[this.$finder.modelCloseUpInd];
 			this._showModel();
 			break;
 		case "YYYG": // Next
