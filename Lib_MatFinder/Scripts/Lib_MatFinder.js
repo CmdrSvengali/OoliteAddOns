@@ -560,52 +560,54 @@ this._displayMaterial = function(mat){
 	if(this.$finder.mode==="model") for(i=0;i<mat.MTX.length;i++) mission.addMessageText(this._aid.scrToWidth(mat.MTX[i],22," "));
 };
 this._modelChoices = function(choice){
-	var tr;
+	var tr,s,
+		c = this.$curMat,
+		f = this.$finder;
 	this.$finder.modelHead.initialChoicesKey = choice;
 	switch(choice){
 		case "YYYA": // Next material
-			if(this.$curMat.sd.materials){
-				this.$curMat.matInd++;
-				if(this.$curMat.matInd>Object.keys(this.$curMat.sd.materials).length-1) this.$curMat.matInd = 0;
-			} else this.$curMat.matInd = 0;
-			this._showModel();
+			if(c.sd.materials){
+				c.matInd++;
+				if(c.matInd>Object.keys(c.sd.materials).length-1) c.matInd = 0;
+			} else c.matInd = 0;
+			s = 1;
 			break;
 		case "ZYYB": // Back
-			this.$finder.modelCurMod = null;
+			f.modelCurMod = null;
 			this._showStart();
 			break;
 		case "YYYC": // Toggle subEntities
-			this.$finder.modelNoSub = !this.$finder.modelNoSub;
-			this._showModel();
+			f.modelNoSub = !f.modelNoSub;
+			s = 1;
 			break;
-		case "YYYD": // Toggle Highlight
-			this.$finder.modeInd++;
-			if(this.$finder.modeInd>1) this.$finder.modeInd = 0;
+		case "YYYD": // Toggle modes
+			f.modeInd++;
+			if(f.modeInd>1) f.modeInd = 0;
 //			this.$finder.modelHighlightActive = !this.$finder.modelHighlightActive;
-			this.$finder.mode = this.$finder.modes[this.$finder.modeInd];
-			this._showModel();
+			f.mode = f.modes[f.modeInd];
+			s = 1;
 			break;
 		case "YYYE": // Toggle Spin
-			this.$finder.modelSpin = !this.$finder.modelSpin;
-			this._showModel();
+			f.modelSpin = !f.modelSpin;
+			s = 1;
 			break;
 		case "YYYF": // Toggle closeup
-			this.$finder.modelCloseUpInd++;
-			if(this.$finder.modelCloseUpInd>4) this.$finder.modelCloseUpInd = 0;
-			this.$finder.modelCloseUp = this.$finder.modelCloseUps[this.$finder.modelCloseUpInd];
-			this._showModel();
+			f.modelCloseUpInd++;
+			if(f.modelCloseUpInd>4) f.modelCloseUpInd = 0;
+			f.modelCloseUp = f.modelCloseUps[f.modelCloseUpInd];
+			s = 1;
 			break;
 		case "YYYG": // Next
-			this.$finder.modelCHCInd++;
-			if(this.$finder.modelCHCInd>4) this.$finder.modelCHCInd = 0;
-			this._showModel();
+			f.modelCHCInd++;
+			if(f.modelCHCInd>4) f.modelCHCInd = 0;
+			s = 1;
 			break;
 		case "XXLG": // to Latest.log
-			switch(this.$finder.mode){
+			switch(f.mode){
 				case "model": this._writeLog(1); break;
 				case "posShader": this._writeLog(3); break;
 			}
-			this._showModel();
+			s = 1;
 			break;
 		case "YYOA": // Orientations
 		case "YYOB":
@@ -614,9 +616,9 @@ this._modelChoices = function(choice){
 		case "YYOE":
 		case "YYOF":
 		case "YYOG":
-			this.$finder.modelSpin = false;
-			this.$finder.modelOri = this.$finder.modelOris[choice];
-			this._showModel();
+			f.modelSpin = false;
+			f.modelOri = f.modelOris[choice];
+			s = 1;
 			break;
 		case "YYMA": // Maps
 		case "YYMB":
@@ -625,9 +627,9 @@ this._modelChoices = function(choice){
 		case "YYME":
 		case "YYMF":
 		case "YYMG":
-			this.$finder.modelMap = this.$finder.modelMaps[choice];
-			this.$finder.modelCurMod = "modelMap";
-			this._showModel();
+			f.modelMap = f.modelMaps[choice];
+			f.modelCurMod = "modelMap";
+			s = 1;
 			break;
 		case "YYCA": // Colors
 		case "YYCB":
@@ -636,48 +638,48 @@ this._modelChoices = function(choice){
 		case "YYCE":
 		case "YYCF":
 		case "YYCG":
-			this.$finder.modelCol = this.$finder.modelColors[choice];
-			this.$finder.modelCurMod = "modelCol";
-			this._showModel();
+			f.modelCol = f.modelColors[choice];
+			f.modelCurMod = "modelCol";
+			s = 1;
 			break;
 		case "YYGA": // gloss
 		case "YYGB": // shininess
 		case "YYGC": // parallax_bias
 		case "YYGD": // parallax_scale
-			this.$finder.modelSet = this.$finder.modelSets[choice];
-			this.$finder.modelCurMod = "modelSet";
+			f.modelSet = f.modelSets[choice];
+			f.modelCurMod = "modelSet";
 			this._enterValue();
 			break;
 		case "YMMA": //Set map
 			this._enterValue();
 			break;
 		case "YMMB": //Clear map
-			delete this.$storedMats[this.$curMat.dataKey][this.$curMat.matIndName][this.$finder[this.$finder.modelCurMod]];
-			this._showModel();
+			delete this.$storedMats[c.dataKey][c.matIndName][f[f.modelCurMod]];
+			s = 1;
 			break;
 		case "YMMC": //Set map modifiers
-			this.$finder.modelCurMod = "modelMapMod";
-			this._showModel();
+			f.modelCurMod = "modelMapMod";
+			s = 1;
 			break;
 		case "YMMD": //Clear map modifiers
-			tr = this.$storedMats[this.$curMat.dataKey][this.$curMat.matIndName][this.$finder[this.$finder.modelCurMod]];
-			if(tr && tr.name) this.$storedMats[this.$curMat.dataKey][this.$curMat.matIndName][this.$finder[this.$finder.modelCurMod]] = tr.name;
-			this._showModel();
+			tr = this.$storedMats[c.dataKey][c.matIndName][f[f.modelCurMod]];
+			if(tr && tr.name) this.$storedMats[c.dataKey][c.matIndName][f[f.modelCurMod]] = tr.name;
+			s = 1;
 			break;
 		case "YMME": //Confirm
-			this.$finder.modelCurMod = null;
-			this._showModel();
+			f.modelCurMod = null;
+			s = 1;
 			break;
 		case "YCCA": //Set color
 			this._enterValue();
 			break;
 		case "YCCB": //Clear color
-			delete this.$storedMats[this.$curMat.dataKey][this.$curMat.matIndName][this.$finder[this.$finder.modelCurMod]];
-			this._showModel();
+			delete this.$storedMats[c.dataKey][c.matIndName][f[f.modelCurMod]];
+			s = 1;
 			break;
 		case "YCCC": //Confirm
-			this.$finder.modelCurMod = null;
-			this._showModel();
+			f.modelCurMod = null;
+			s = 1;
 			break;
 		case "YMOA": // anisotropy
 		case "YMOB": // cube_map
@@ -688,60 +690,61 @@ this._modelChoices = function(choice){
 		case "YMOG": // repeat_s
 		case "YMOH": // repeat_t
 		case "YMOI": // texture_LOD_bias
-			this.$finder.modelMapMod = this.$finder.modelMapMods[choice];
+			f.modelMapMod = f.modelMapMods[choice];
 			this._enterValue();
 			break;
 		case "YMOJ": // Confirm
-			this.$finder.modelCurMod = "modelMap";
-			this._showModel();
+			f.modelCurMod = "modelMap";
+			s = 1;
 			break;
 		case "PSXA": // Increase X
-			this.$finder.shadePos[0] += this.$finder.moveAmount.x.val[this.$finder.moveAmount.x.ind];
-			this._showModel();
+			f.shadePos[0] += f.moveAmount.x.val[f.moveAmount.x.ind];
+			s = 1;
 			break;
 		case "PSXB": // Decrease X
-			this.$finder.shadePos[0] -= this.$finder.moveAmount.x.val[this.$finder.moveAmount.x.ind];
-			this._showModel();
+			f.shadePos[0] -= f.moveAmount.x.val[f.moveAmount.x.ind];
+			s = 1;
 			break;
 		case "PSXC": // Amount X
-			this.$finder.moveAmount.x.ind++;
-			if(this.$finder.moveAmount.x.ind>4) this.$finder.moveAmount.x.ind = 0;
-			this._showModel();
+			f.moveAmount.x.ind++;
+			if(f.moveAmount.x.ind>4) f.moveAmount.x.ind = 0;
+			s = 1;
 			break;
 		case "PSYA": // Increase Y
-			this.$finder.shadePos[1] += this.$finder.moveAmount.y.val[this.$finder.moveAmount.y.ind];
-			this._showModel();
+			f.shadePos[1] += f.moveAmount.y.val[f.moveAmount.y.ind];
+			s = 1;
 			break;
 		case "PSYB": // Decrease Y
-			this.$finder.shadePos[1] -= this.$finder.moveAmount.y.val[this.$finder.moveAmount.y.ind];
-			this._showModel();
+			f.shadePos[1] -= f.moveAmount.y.val[f.moveAmount.y.ind];
+			s = 1;
 			break;
 		case "PSYC": // Amount Y
-			this.$finder.moveAmount.y.ind++;
-			if(this.$finder.moveAmount.y.ind>4) this.$finder.moveAmount.y.ind = 0;
-			this._showModel();
+			f.moveAmount.y.ind++;
+			if(f.moveAmount.y.ind>4) f.moveAmount.y.ind = 0;
+			s = 1;
 			break;
 		case "PSZA": // Increase Z
-			this.$finder.shadePos[2] += this.$finder.moveAmount.z.val[this.$finder.moveAmount.z.ind];
-			this._showModel();
+			f.shadePos[2] += f.moveAmount.z.val[f.moveAmount.z.ind];
+			s = 1;
 			break;
 		case "PSZB": // Decrease Z
-			this.$finder.shadePos[2] -= this.$finder.moveAmount.z.val[this.$finder.moveAmount.z.ind];
-			this._showModel();
+			f.shadePos[2] -= f.moveAmount.z.val[f.moveAmount.z.ind];
+			s = 1;
 			break;
 		case "PSZC": // Amount Z
-			this.$finder.moveAmount.z.ind++;
-			if(this.$finder.moveAmount.z.ind>4) this.$finder.moveAmount.z.ind = 0;
-			this._showModel();
+			f.moveAmount.z.ind++;
+			if(f.moveAmount.z.ind>4) f.moveAmount.z.ind = 0;
+			s = 1;
 			break;
 		case "PSZZ": // Reset position
-			this.$finder.shadePos = [0,0,0];
-			this._showModel();
+			f.shadePos = [0,0,0];
+			s = 1;
 			break;
 		default:
 			log(this.name,"Choice unhandled: "+choice);
 			this._showStart();
 	}
+	if(s) this._showModel();
 };
 this._enterValue = function(){
 	var head = this._aid.objClone(this.$finder.pageHead),
