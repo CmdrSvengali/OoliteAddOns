@@ -15,5 +15,5 @@
 	);
 	tags = ("materials");
 	title = "Lib_MatFinder";
-	version = "1.0";
+	version = "1.1";
 }
