@@ -138,6 +138,7 @@ this.$finder = {
 	modeInd: 0,
 	modes: ["model","posShader"],
 	modeNames: ["Materials","Positions"],
+	modePages: [4,5],
 	moveAmount: {
 		x: {ind:1,val:[100,10,1,0.1,0.01]},
 		y: {ind:1,val:[100,10,1,0.1,0.01]},
@@ -150,6 +151,10 @@ this.$finder = {
 	},
 	shadePos: [0,0,0],
 	shadeOri: [1,0,0,0],
+	shadeSize: [0,0,0,1],
+	size: 0,
+	sizeInd: 1,
+	sizes: [10,1,0.1,0.01],
 	logCompact: false,
 	modelNoSub: false,
 	modelHighlightActive: false,
@@ -290,123 +295,134 @@ this._generatedChoices = function(choice){
 };
 this._setModelHead = function(){
 	var head = this._aid.objClone(this.$finder.modelHead),
+		c = this.$curMat,
+		f = this.$finder,
+		hc = head.choices,
 		cmd = this.$curMat.dataKey,
-		mcm = this.$finder.modelCurMod;
-	head.title = "Model: "+cmd+" - M:"+this.$curMat.matInd;
-	if(mcm) head.title += " "+this.$finder[mcm];
+		mcm = f.modelCurMod;
+	head.title = "Model: "+cmd+" - M:"+c.matInd;
+	if(mcm) head.title += " "+f[mcm];
 	head.model = "["+cmd+"]";
-	head.spinModel = this.$finder.modelSpin;
+	head.spinModel = f.modelSpin;
 	if(mcm){
 		switch(mcm){
 			case "modelMap":
-				head.choices.YMMA = "Set map";
-				head.choices.YMMB = "Clear map";
-				head.choices.YMMC = "Change modifiers";
-				head.choices.YMMD = "Clear modifiers";
-				head.choices.YMME = "Confirm";
-				if(!this.$storedMats[cmd] || !this.$storedMats[cmd][this.$curMat.matIndName] ||
-					!this.$storedMats[cmd][this.$curMat.matIndName][this.$finder.modelMap]){
-						this._aid.scrChcUnsel(head.choices,"YMMC");
-						this._aid.scrChcUnsel(head.choices,"YMMD");
+				hc.YMMA = "Set map";
+				hc.YMMB = "Clear map";
+				hc.YMMC = "Change modifiers";
+				hc.YMMD = "Clear modifiers";
+				hc.YMME = "Confirm";
+				if(!this.$storedMats[cmd] || !this.$storedMats[cmd][c.matIndName] ||
+					!this.$storedMats[cmd][c.matIndName][f.modelMap]){
+						this._aid.scrChcUnsel(hc,"YMMC");
+						this._aid.scrChcUnsel(hc,"YMMD");
 				}
 				break;
 			case "modelCol":
-				head.choices.YCCA = "Set color";
-				head.choices.YCCB = "Clear color";
-				head.choices.YCCC = "Confirm";
+				hc.YCCA = "Set color";
+				hc.YCCB = "Clear color";
+				hc.YCCC = "Confirm";
 				break;
 			case "modelMapMod":
-				head.choices.YMOA = "Set anisotropy";
-				head.choices.YMOB = "Set cube_map";
-				head.choices.YMOC = "Set extract_channel";
-				head.choices.YMOD = "Set mag_filter";
-				head.choices.YMOE = "Set min_filter";
-				head.choices.YMOF = "Set no_shrink";
-				head.choices.YMOG = "Set repeat_s";
-				head.choices.YMOH = "Set repeat_t";
-				head.choices.YMOI = "Set texture_LOD_bias";
-				head.choices.YMOJ = "Confirm";
+				hc.YMOA = "Set anisotropy";
+				hc.YMOB = "Set cube_map";
+				hc.YMOC = "Set extract_channel";
+				hc.YMOD = "Set mag_filter";
+				hc.YMOE = "Set min_filter";
+				hc.YMOF = "Set no_shrink";
+				hc.YMOG = "Set repeat_s";
+				hc.YMOH = "Set repeat_t";
+				hc.YMOI = "Set texture_LOD_bias";
+				hc.YMOJ = "Confirm";
 				break;
 		}
 	} else {
-		if(typeof(this.$curMat.sd.materials)==="object"){
-			this.$curMat.sdKeys = Object.keys(this.$curMat.sd.materials);
-			if(this.$curMat.sdKeys.length && this.$curMat.sdKeys.length>1){
-				head.choices.YYYA = "Next material";
-			}
+		if(typeof(c.sd.materials)==="object"){
+			c.sdKeys = Object.keys(c.sd.materials);
+			if(c.sdKeys.length && c.sdKeys.length>1) hc.YYYA = "Next material";
 		}
-		switch(this.$finder.modelCHCInd){
+		switch(f.modelCHCInd){
 			case 0:
-				head.choices.YYYC = "Subentities: "+(!this.$finder.modelNoSub);
-				head.choices.YYYD = "Mode: "+this.$finder.modeNames[this.$finder.modeInd];
-				head.choices.YYYE = "Spin model: "+this.$finder.modelSpin;
-				head.choices.YYYF = "Closeup: "+(this.$finder.modelCloseUp?" :"+this.$finder.modelCloseUps[this.$finder.modelCloseUpInd]:"Off");
-				head.choices.YYYG = "Next";
-				head.choices.XXLG = "Write to Latest.log";
+				hc.YYYC = "Subentities: "+(!f.modelNoSub);
+				hc.YYYD = "Mode: "+f.modeNames[f.modeInd];
+				hc.YYYE = "Spin model: "+f.modelSpin;
+				hc.YYYF = "Closeup: "+(f.modelCloseUp?" :"+f.modelCloseUps[f.modelCloseUpInd]:"Off");
+				hc.YYYG = "Next";
+				hc.XXLG = "Write to Latest.log";
 				break;
 			case 1:
-				head.choices.YYOA = "Rear";
-				head.choices.YYOB = "User";
-				head.choices.YYOC = "Front";
-				head.choices.YYOD = "Bottom";
-				head.choices.YYOE = "Top";
-				head.choices.YYOF = "Left";
-				head.choices.YYOG = "Right";
-				head.choices.YYYG = "Next";
+				hc.YYOA = "Rear";
+				hc.YYOB = "User";
+				hc.YYOC = "Front";
+				hc.YYOD = "Bottom";
+				hc.YYOE = "Top";
+				hc.YYOF = "Left";
+				hc.YYOG = "Right";
+				hc.YYYG = "Next";
 				break;
 			case 2:
-				if(this.$finder.mode==="model"){
-					head.choices.YYMA = "Change diffuse_map";
-					head.choices.YYMB = "Change emission_and_illumination_map";
-					head.choices.YYMC = "Change emission_map";
-					head.choices.YYMD = "Change illumination_map";
-					head.choices.YYME = "Change normal_and_parallax_map";
-					head.choices.YYMF = "Change normal_map";
-					head.choices.YYMG = "Change specular_map";
+				if(f.mode==="model"){
+					hc.YYMA = "Change diffuse_map";
+					hc.YYMB = "Change emission_and_illumination_map";
+					hc.YYMC = "Change emission_map";
+					hc.YYMD = "Change illumination_map";
+					hc.YYME = "Change normal_and_parallax_map";
+					hc.YYMF = "Change normal_map";
+					hc.YYMG = "Change specular_map";
 				}
-				if(this.$finder.mode==="posShader"){
-					head.choices.PSZA = "Increase Z";
-					head.choices.PSZB = "Decrease Z";
-					head.choices.PSZC = "Amount: "+this.$finder.moveAmount.z.val[this.$finder.moveAmount.z.ind];
-					head.choices.PSZZ = "Reset position";
+				if(f.mode==="posShader"){
+					hc.PSZA = "Increase Z";
+					hc.PSZB = "Decrease Z";
+					hc.PSZC = "Amount: "+f.moveAmount.z.val[f.moveAmount.z.ind];
+					hc.PSZZ = "Reset position";
 				}
-				head.choices.YYYG = "Next";
+				hc.YYYG = "Next";
 				break;
 			case 3:
-				if(this.$finder.mode==="model"){
-					head.choices.YYCA = "Change ambient_color";
-					head.choices.YYCB = "Change diffuse_color";
-					head.choices.YYCC = "Change emission_color";
-					head.choices.YYCD = "Change emission_modulate_color";
-					head.choices.YYCE = "Change illumination_modulate_color";
-					head.choices.YYCF = "Change specular_color";
-					head.choices.YYCG = "Change specular_modulate_color";
+				if(f.mode==="model"){
+					hc.YYCA = "Change ambient_color";
+					hc.YYCB = "Change diffuse_color";
+					hc.YYCC = "Change emission_color";
+					hc.YYCD = "Change emission_modulate_color";
+					hc.YYCE = "Change illumination_modulate_color";
+					hc.YYCF = "Change specular_color";
+					hc.YYCG = "Change specular_modulate_color";
 				}
-				if(this.$finder.mode==="posShader"){
-					head.choices.PSXA = "Increase X";
-					head.choices.PSXB = "Decrease X";
-					head.choices.PSXC = "Amount: "+this.$finder.moveAmount.x.val[this.$finder.moveAmount.x.ind];
-					head.choices.PSZZ = "Reset position";
+				if(f.mode==="posShader"){
+					hc.PSXA = "Increase X";
+					hc.PSXB = "Decrease X";
+					hc.PSXC = "Amount: "+f.moveAmount.x.val[f.moveAmount.x.ind];
+					hc.PSZZ = "Reset position";
 				}
-				head.choices.YYYG = "Next";
+				hc.YYYG = "Next";
 				break;
 			case 4:
-				if(this.$finder.mode==="model"){
-					head.choices.YYGA = "Set gloss";
-					head.choices.YYGB = "Set shininess";
-					head.choices.YYGC = "Set parallax_bias";
-					head.choices.YYGD = "Set parallax_scale";
+				if(f.mode==="model"){
+					hc.YYGA = "Set gloss";
+					hc.YYGB = "Set shininess";
+					hc.YYGC = "Set parallax_bias";
+					hc.YYGD = "Set parallax_scale";
 				}
-				if(this.$finder.mode==="posShader"){
-					head.choices.PSYA = "Increase Y";
-					head.choices.PSYB = "Decrease Y";
-					head.choices.PSYC = "Amount: "+this.$finder.moveAmount.y.val[this.$finder.moveAmount.y.ind];
-					head.choices.PSZZ = "Reset position";
+				if(f.mode==="posShader"){
+					hc.PSYA = "Increase Y";
+					hc.PSYB = "Decrease Y";
+					hc.PSYC = "Amount: "+f.moveAmount.y.val[f.moveAmount.y.ind];
+					hc.PSZZ = "Reset position";
 				}
-				head.choices.YYYG = "Next";
+				hc.YYYG = "Next";
+				break;
+			case 5:
+				if(f.mode==="posShader"){
+					hc.PSSA = "Increase Size";
+					hc.PSSB = "Decrease Size";
+					hc.PSSC = "Amount: "+f.sizes[f.sizeInd];
+					hc.PSSZ = "Reset Size";
+				}
+				hc.YYYG = "Next";
 				break;
 		}
 	}
+	head.choices = hc;
 	return head;
 };
 this._showModel = function(){
@@ -459,6 +475,8 @@ this._showModel = function(){
 			high[mki].uniforms = this.$posShader.uniforms;
 			high[mki].uniforms.pos.value = this.$finder.shadePos;
 			high[mki].uniforms.ori.value = this.$finder.shadeOri;
+			high[mki].uniforms.size.value = this.$finder.shadeSize;
+			high[mki].uniforms.size.value[2] = this.$finder.size;
 			md.setMaterials(high,{});
 		} else {
 			if(this.$finder.modelNoShade){
@@ -556,7 +574,8 @@ this._displayMaterial = function(mat){
 	if(this.$finder.mode==="posShader"){
 		xyz = this.$finder.shadePos;
 		for(i=0;i<xyz.length;i++) xyz[i] = this._aid.toPrec(xyz[i],4);
-		mission.addMessageText(this.$finder.shadePos);
+		mission.addMessageText("Position: "+this.$finder.shadePos);
+		mission.addMessageText("Size: "+this._aid.toPrec(this.$finder.size,4));
 	}
 	if(this.$finder.mode==="model") for(i=0;i<mat.MTX.length;i++) mission.addMessageText(this._aid.scrToWidth(mat.MTX[i],22," "));
 };
@@ -600,7 +619,7 @@ this._modelChoices = function(choice){
 			break;
 		case "YYYG": // Next
 			f.modelCHCInd++;
-			if(f.modelCHCInd>4) f.modelCHCInd = 0;
+			if(f.modelCHCInd>f.modePages[f.modeInd]) f.modelCHCInd = 0;
 			s = 1;
 			break;
 		case "XXLG": // to Latest.log
@@ -739,6 +758,24 @@ this._modelChoices = function(choice){
 			break;
 		case "PSZZ": // Reset position
 			f.shadePos = [0,0,0];
+			s = 1;
+			break;
+		case "PSSA": // Increase Size
+			f.size += f.sizes[f.sizeInd];
+			s = 1;
+			break;
+		case "PSSB": // Decrease Size
+			f.size -= f.sizes[f.sizeInd];
+			if(f.size<0) f.size = 0;
+			s = 1;
+			break;
+		case "PSSC": // Amount Size
+			f.sizeInd++;
+			if(f.sizeInd>f.sizes.length) f.sizeInd = 0;
+			s = 1;
+			break;
+		case "PSSZ": // Reset Size
+			f.size = 0;
 			s = 1;
 			break;
 		default:
@@ -935,7 +972,9 @@ this._writeLog = function(mode){
 	switch(mode){
 		case 1: m = this.$storedMats[this.$curMat.dataKey]; where = "$defsM"; this.$matLog = ["materials = {"]; break;
 		case 2: m = this.$curMat.sd.subentities; where = "$defsSub"; this.$matLog = ["subentities = ("]; break;
-		case 3: log(this.name,"Entry for "+this.$curMat.dataKey+": Position: "+this.$finder.shadePos); return;
+		case 3: 
+			log(this.name,"Entry for "+this.$curMat.dataKey+": Position: "+this.$finder.shadePos+" - Size: "+this._aid.toPrec(this.$finder.size,4));
+			return;
 	}
 	var mk = Object.keys(m),
 		ek,ev,fk,fv,k,t,tm,tp;
