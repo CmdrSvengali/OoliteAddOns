@@ -1,5 +1,5 @@
 varying vec2 vTexCoord;
-varying vec3 vCol,vNormal;
+varying vec3 vCol,vNormal,vVertex;
 uniform vec4 pos,ori;
 
 mat3 quatToMatrix(in vec4 q){
@@ -28,6 +28,7 @@ mat3 quatToMatrix(in vec4 q){
 }
 void main(void)
 {
+	vVertex = gl_Vertex.xyz;
 	vNormal = normalize(gl_NormalMatrix * gl_Normal);
 	vCol = quatToMatrix(ori)*vec3(pos-gl_Vertex);
 	vTexCoord = gl_MultiTexCoord0.st;

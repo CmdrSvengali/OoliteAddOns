@@ -104,7 +104,8 @@ this.$posShader = {
 	uniforms: {
 		tex0: {type:"texture",value:0},
 		pos: {type:"vector",value:[0,0,0],normalized:false},
-		ori: {type:"vector",value:[0,0,0],normalized:false}
+		ori: {type:"vector",value:[0,0,0],normalized:false},
+		size: {type:"vector",value:[0,0,0],normalized:false}
 	}
 };
 
