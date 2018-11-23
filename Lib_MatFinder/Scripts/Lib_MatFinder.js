@@ -133,12 +133,14 @@ this.$finder = {
 		background:{name:"Lib_MatFinder_BG.png",height:512},
 		screenID:this.name
 	},
-	mode: "model", // shaderMat, posShader, shader, subentities, flashers
+	mode: "posShader", // model (default), shaderMat, posShader, shader, subentities, flashers
 	moveAmount: {
 		x: {ind:1,val:[100,10,1,0.1,0.01]},
 		y: {ind:1,val:[100,10,1,0.1,0.01]},
 		z: {ind:1,val:[100,10,1,0.1,0.01]}
 	},
+	shadePos: [0,0,0],
+	shadeOri: [1,0,0,0],
 	logCompact: false,
 	modelNoSub: false,
 	modelHighlightActive: false,
@@ -353,9 +355,10 @@ this._setModelHead = function(){
 					head.choices.YYMG = "Change specular_map";
 				}
 				if(this.$finder.mode==="posShader"){
-					head.coices.PSZA = "Increase Z";
-					head.coices.PSZB = "Decrease Z";
-					head.coices.PSZC = "Amount: "+this.$finder.moveAmount.z.val[this.$finder.moveAmount.z.ind];
+					head.choices.PSZA = "Increase Z";
+					head.choices.PSZB = "Decrease Z";
+					head.choices.PSZC = "Amount: "+this.$finder.moveAmount.z.val[this.$finder.moveAmount.z.ind];
+					head.choices.PSZZ = "Reset position";
 				}
 				head.choices.YYYG = "Next";
 				break;
@@ -370,6 +373,10 @@ this._setModelHead = function(){
 					head.choices.YYCG = "Change specular_modulate_color";
 				}
 				if(this.$finder.mode==="posShader"){
+					head.choices.PSXA = "Increase X";
+					head.choices.PSXB = "Decrease X";
+					head.choices.PSXC = "Amount: "+this.$finder.moveAmount.x.val[this.$finder.moveAmount.x.ind];
+					head.choices.PSZZ = "Reset position";
 				}
 				head.choices.YYYG = "Next";
 				break;
@@ -381,6 +388,10 @@ this._setModelHead = function(){
 					head.choices.YYGD = "Set parallax_scale";
 				}
 				if(this.$finder.mode==="posShader"){
+					head.choices.PSYA = "Increase Y";
+					head.choices.PSYB = "Decrease Y";
+					head.choices.PSYC = "Amount: "+this.$finder.moveAmount.y.val[this.$finder.moveAmount.y.ind];
+					head.choices.PSZZ = "Reset position";
 				}
 				head.choices.YYYG = "Next";
 				break;
@@ -433,8 +444,11 @@ this._showModel = function(){
 			high = this._aid.objClone(mat);
 			high[mki].vertex_shader = this.$posShader.vertex_shader;
 			high[mki].fragment_shader = this.$posShader.fragment_shader;
-			high[mki].textures = this.$posShader.textures;
+			if(mat[mki].diffuse_map) high[mki].textures = [mat[mki].diffuse_map];
+			else high[mki].textures = this.$posShader.textures;
 			high[mki].uniforms = this.$posShader.uniforms;
+			high[mki].uniforms.pos.value = this.$finder.shadePos;
+			high[mki].uniforms.ori.value = this.$finder.shadeOri;
 			md.setMaterials(high,{});
 		} else {
 			if(this.$finder.modelNoShade){
@@ -501,6 +515,7 @@ this._parseMaterial = function(mat){
 	return nm;
 };
 this._displayMaterial = function(mat){
+	var i,xyz;
 	mission.addMessageText(
 		this._aid.scrToWidth(""+(mat.diffuse_map ? mat.diffuse_map : "-"),20," ")+
 		this._aid.scrToWidth(""+(mat.ambient_color ? mat.ambient_color : "-"),11,0,0,1));
@@ -528,7 +543,12 @@ this._displayMaterial = function(mat){
 	mission.addMessageText(
 		this._aid.scrToWidth(""+(mat.shininess ? mat.shininess : "-"),20," ")+
 		this._aid.scrToWidth(""+(mat.parallax_scale ? mat.parallax_scale : "-"),11,0,0,1));
-	for(var i=0;i<mat.MTX.length;i++) mission.addMessageText(this._aid.scrToWidth(mat.MTX[i],22," "));
+	if(this.$finder.mode==="posShader"){
+		xyz = this.$finder.shadePos;
+		for(i=0;i<xyz.length;i++) xyz[i] = this._aid.toPrec(xyz[i],4);
+		mission.addMessageText(this.$finder.shadePos);
+	}
+	if(this.$finder.mode==="model") for(i=0;i<mat.MTX.length;i++) mission.addMessageText(this._aid.scrToWidth(mat.MTX[i],22," "));
 };
 this._modelChoices = function(choice){
 	var tr;
@@ -567,7 +587,10 @@ this._modelChoices = function(choice){
 			this._showModel();
 			break;
 		case "XXLG": // to Latest.log
-			this._writeLog(1);
+			switch(this.$finder.mode){
+				case "model": this._writeLog(1); break;
+				case "posShader": this._writeLog(3); break;
+			}
 			this._showModel();
 			break;
 		case "YYOA": // Orientations
@@ -656,6 +679,49 @@ this._modelChoices = function(choice){
 			break;
 		case "YMOJ": // Confirm
 			this.$finder.modelCurMod = "modelMap";
+			this._showModel();
+			break;
+		case "PSXA": // Increase X
+			this.$finder.shadePos[0] += this.$finder.moveAmount.x.val[this.$finder.moveAmount.x.ind];
+			this._showModel();
+			break;
+		case "PSXB": // Decrease X
+			this.$finder.shadePos[0] -= this.$finder.moveAmount.x.val[this.$finder.moveAmount.x.ind];
+			this._showModel();
+			break;
+		case "PSXC": // Amount X
+			this.$finder.moveAmount.x.ind++;
+			if(this.$finder.moveAmount.x.ind>4) this.$finder.moveAmount.x.ind = 0;
+			this._showModel();
+			break;
+		case "PSYA": // Increase Y
+			this.$finder.shadePos[1] += this.$finder.moveAmount.y.val[this.$finder.moveAmount.y.ind];
+			this._showModel();
+			break;
+		case "PSYB": // Decrease Y
+			this.$finder.shadePos[1] -= this.$finder.moveAmount.y.val[this.$finder.moveAmount.y.ind];
+			this._showModel();
+			break;
+		case "PSYC": // Amount Y
+			this.$finder.moveAmount.y.ind++;
+			if(this.$finder.moveAmount.y.ind>4) this.$finder.moveAmount.y.ind = 0;
+			this._showModel();
+			break;
+		case "PSZA": // Increase Z
+			this.$finder.shadePos[2] += this.$finder.moveAmount.z.val[this.$finder.moveAmount.z.ind];
+			this._showModel();
+			break;
+		case "PSZB": // Decrease Z
+			this.$finder.shadePos[2] -= this.$finder.moveAmount.z.val[this.$finder.moveAmount.z.ind];
+			this._showModel();
+			break;
+		case "PSZC": // Amount Z
+			this.$finder.moveAmount.z.ind++;
+			if(this.$finder.moveAmount.z.ind>4) this.$finder.moveAmount.z.ind = 0;
+			this._showModel();
+			break;
+		case "PSZZ": // Reset position
+			this.$finder.shadePos = [0,0,0];
 			this._showModel();
 			break;
 		default:
@@ -851,6 +917,7 @@ this._writeLog = function(mode){
 	switch(mode){
 		case 1: m = this.$storedMats[this.$curMat.dataKey]; where = "$defsM"; this.$matLog = ["materials = {"]; break;
 		case 2: m = this.$curMat.sd.subentities; where = "$defsSub"; this.$matLog = ["subentities = ("]; break;
+		case 3: log(this.name,"Entry for "+this.$curMat.dataKey+": Position: "+this.$finder.shadePos); return;
 	}
 	var mk = Object.keys(m),
 		ek,ev,fk,fv,k,t,tm,tp;
