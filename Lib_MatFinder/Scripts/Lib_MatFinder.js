@@ -152,6 +152,7 @@ this.$finder = {
 	shadePos: [0,0,0],
 	shadeOri: [1,0,0,0],
 	shadeSize: [0,0,0,1],
+	shaderLevel: 0,
 	size: 0,
 	sizeInd: 1,
 	sizes: [10,1,0.1,0.01],
@@ -182,6 +183,7 @@ this.$finder = {
 this.startUpComplete = function(){
 	this._aid = worldScripts.Lib_Main._lib;
 	this.$dataKeys = worldScripts.Lib_Main._lib.$ships;
+	this.$finder.shaderLevel = this._aid.ooShaders();
 	this._addInterface();
 	this.$finder.pagesMax = Math.ceil(this.$dataKeys.length/24);
 	worldScripts.Lib_GUI.$IDRules.Lib_MatFinder = {mus:1};
@@ -261,9 +263,12 @@ this._showGenerate = function(){
 	var head = this._aid.objClone(this.$finder.modelHead);
 	head.title = "Model: "+this.$curMat.dataKey+" - M:"+this.$curMat.matInd;
 	head.model = "["+this.$curMat.dataKey+"]";
-	head.choices.GAAA = "Generate materials entry";
-	if(this.$curMat.sd.subentities) head.choices.GALS = "Write subentities to Latest.log";
 	head.message = expandMissionText("LIB_MATF_NOMAT");
+	head.choices.GAAA = "Generate materials entry";
+	if(this.$curMat.sd.subentities){
+		head.choices.GALS = "Write subentities to Latest.log";
+		head.message += "\n"+expandMissionText("LIB_MATF_NOMAT_UPD");
+	}
 	head.background = {name:"lib_bg.png",height:512};
 	mission.runScreen(head,this._generateChoices);
 };
@@ -428,16 +433,17 @@ this._setModelHead = function(){
 this._showModel = function(){
 	var mat,matKeys,md,mki,newMat,high,
 		head = this._setModelHead(),
-		cdk = this.$curMat.dataKey;
+		cdk = this.$curMat.dataKey,
+		f = this.$finder;
 	mission.runScreen(head,this._modelChoices);
 	md = mission.displayModel;
-	md.orientation = this.$finder.modelOri;
-	if(this.$finder.modelCloseUp) md.position = [0,0,md.collisionRadius+this.$finder.modelCloseUps[this.$finder.modelCloseUpInd]];
+	md.orientation = f.modelOri;
+	if(f.modelCloseUp) md.position = [0,0,md.collisionRadius+f.modelCloseUps[f.modelCloseUpInd]];
 	if(md){
 		if(md.subEntities && md.subEntities.length){
 			var sub = md.subEntities.length;
 			while(sub){
-				if(this.$finder.modelNoSub) md.subEntities[sub-1].remove();
+				if(f.modelNoSub) md.subEntities[sub-1].remove();
 				else if(this.$storedMats[md.subEntities[sub-1].dataKey]){
 					md.subEntities[sub-1].setMaterials(this.$storedMats[md.subEntities[sub-1].dataKey],{});
 				}
@@ -466,26 +472,26 @@ this._showModel = function(){
 		}
 		newMat = this._parseMaterial(mat[mki]);
 		this._displayMaterial(newMat);
-		if(this.$finder.mode==="posShader"){
+		if(f.mode==="posShader"){
 			high = this._aid.objClone(mat);
 			high[mki].vertex_shader = this.$posShader.vertex_shader;
 			high[mki].fragment_shader = this.$posShader.fragment_shader;
 			if(mat[mki].diffuse_map) high[mki].textures = [mat[mki].diffuse_map];
 			else high[mki].textures = this.$posShader.textures;
 			high[mki].uniforms = this.$posShader.uniforms;
-			high[mki].uniforms.pos.value = this.$finder.shadePos;
-			high[mki].uniforms.ori.value = this.$finder.shadeOri;
-			high[mki].uniforms.size.value = this.$finder.shadeSize;
-			high[mki].uniforms.size.value[2] = this.$finder.size;
+			high[mki].uniforms.pos.value = f.shadePos;
+			high[mki].uniforms.ori.value = f.shadeOri;
+			high[mki].uniforms.size.value = f.shadeSize;
+			high[mki].uniforms.size.value[2] = f.size;
 			md.setMaterials(high,{});
 		} else {
-			if(this.$finder.modelNoShade){
+			if(f.modelNoShade){
 				if(mat[mki].vertex_shader) delete mat[mki].vertex_shader;
 				if(mat[mki].fragment_shader) delete mat[mki].fragment_shader;
 				if(mat[mki].textures) delete mat[mki].textures;
 				if(mat[mki].uniforms) delete mat[mki].uniforms;
 			}
-			if(this.$finder.modelHighlightActive){
+			if(f.modelHighlightActive){
 				high = this._aid.objClone(mat);
 				high[mki].emission_color = [1,0,0,1];
 				high[mki].emission_map = null;
