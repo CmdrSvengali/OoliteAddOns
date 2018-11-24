@@ -153,8 +153,10 @@ this.$finder = {
 	shadeOri: [1,0,0,0],
 	shadeSize: [0,0,0,1],
 	shaderLevel: 0,
-	size: 0,
-	sizeInd: 1,
+	sizeX: 0,
+	sizeY: 0,
+	sizeXInd: 1,
+	sizeYInd: 1,
 	sizes: [10,1,0.1,0.01],
 	logCompact: false,
 	modelNoSub: false,
@@ -418,9 +420,12 @@ this._setModelHead = function(){
 				break;
 			case 5:
 				if(f.mode==="posShader"){
-					hc.PSSA = "Increase Size";
-					hc.PSSB = "Decrease Size";
-					hc.PSSC = "Amount: "+f.sizes[f.sizeInd];
+					hc.PSSA = "Increase Size X";
+					hc.PSSB = "Decrease Size X";
+					hc.PSSC = "Amount X: "+f.sizes[f.sizeXInd];
+					hc.PSSD = "Increase Size Y";
+					hc.PSSE = "Decrease Size Y";
+					hc.PSSF = "Amount Y: "+f.sizes[f.sizeYInd];
 					hc.PSSZ = "Reset Size";
 				}
 				hc.YYYG = "Next";
@@ -482,7 +487,8 @@ this._showModel = function(){
 			high[mki].uniforms.pos.value = f.shadePos;
 			high[mki].uniforms.ori.value = f.shadeOri;
 			high[mki].uniforms.size.value = f.shadeSize;
-			high[mki].uniforms.size.value[2] = f.size;
+			high[mki].uniforms.size.value[0] = f.sizeX;
+			high[mki].uniforms.size.value[1] = f.sizeY;
 			md.setMaterials(high,{});
 		} else {
 			if(f.modelNoShade){
@@ -581,7 +587,7 @@ this._displayMaterial = function(mat){
 		xyz = this.$finder.shadePos;
 		for(i=0;i<xyz.length;i++) xyz[i] = this._aid.toPrec(xyz[i],4);
 		mission.addMessageText("Position: "+this.$finder.shadePos);
-		mission.addMessageText("Size: "+this._aid.toPrec(this.$finder.size,4));
+		mission.addMessageText("Size: X:"+this._aid.toPrec(this.$finder.sizeX,4)+" Y:"+this._aid.toPrec(this.$finder.sizeY,4));
 	}
 	if(this.$finder.mode==="model") for(i=0;i<mat.MTX.length;i++) mission.addMessageText(this._aid.scrToWidth(mat.MTX[i],22," "));
 };
@@ -766,22 +772,37 @@ this._modelChoices = function(choice){
 			f.shadePos = [0,0,0];
 			s = 1;
 			break;
-		case "PSSA": // Increase Size
-			f.size += f.sizes[f.sizeInd];
+		case "PSSA": // Increase Size X
+			f.sizeX += f.sizes[f.sizeXInd];
 			s = 1;
 			break;
-		case "PSSB": // Decrease Size
-			f.size -= f.sizes[f.sizeInd];
-			if(f.size<0) f.size = 0;
+		case "PSSB": // Decrease Size X
+			f.sizeX -= f.sizes[f.sizeXInd];
+			if(f.sizeX<0) f.sizeX = 0;
 			s = 1;
 			break;
-		case "PSSC": // Amount Size
-			f.sizeInd++;
-			if(f.sizeInd>f.sizes.length) f.sizeInd = 0;
+		case "PSSC": // Amount Size X
+			f.sizeXInd++;
+			if(f.sizeXInd>f.sizes.length) f.sizeXInd = 0;
+			s = 1;
+			break;
+		case "PSSD": // Increase Size Y
+			f.sizeY += f.sizes[f.sizeYInd];
+			s = 1;
+			break;
+		case "PSSE": // Decrease Size Y
+			f.sizeY -= f.sizes[f.sizeYInd];
+			if(f.sizeY<0) f.sizeY = 0;
+			s = 1;
+			break;
+		case "PSSF": // Amount Size
+			f.sizeYInd++;
+			if(f.sizeYInd>f.sizes.length) f.sizeYInd = 0;
 			s = 1;
 			break;
 		case "PSSZ": // Reset Size
-			f.size = 0;
+			f.sizeX = 0;
+			f.sizeY = 0;
 			s = 1;
 			break;
 		default:
@@ -979,7 +1000,7 @@ this._writeLog = function(mode){
 		case 1: m = this.$storedMats[this.$curMat.dataKey]; where = "$defsM"; this.$matLog = ["materials = {"]; break;
 		case 2: m = this.$curMat.sd.subentities; where = "$defsSub"; this.$matLog = ["subentities = ("]; break;
 		case 3: 
-			log(this.name,"Entry for "+this.$curMat.dataKey+": Position: "+this.$finder.shadePos+" - Size: "+this._aid.toPrec(this.$finder.size,4));
+			log(this.name,"Entry for "+this.$curMat.dataKey+": Position: "+this.$finder.shadePos+" - Size: X:"+this._aid.toPrec(this.$finder.sizeX,4)+" Y:"+this._aid.toPrec(this.$finder.sizeY,4));
 			return;
 	}
 	var mk = Object.keys(m),
