@@ -135,11 +135,12 @@ this.$finder = {
 		background:{name:"Lib_MatFinder_BG.png",height:512},
 		screenID:this.name
 	},
+	gen: null,
 	mode: "model", // model (default), shaderMat, posShader, shader, subentities, flashers
 	modeInd: 0,
 	modes: ["model","posShader"],
 	modeNames: ["Materials","Positions"],
-	modePages: [4,5],
+	modePages: [5,5],
 	moveAmount: {
 		x: {ind:1,val:[100,10,1,0.1,0.01]},
 		y: {ind:1,val:[100,10,1,0.1,0.01]},
@@ -251,8 +252,12 @@ this._getModelData = function(obj){
 		t3 = this._aid.arrUnique(t3);
 		this.$storedTex[this.$curMat.dataKey] = t3;
 	}
+	this._getPosData();
+	this._showModel();
+};
+this._getPosData = function(){
 	if(!this.$storedPos[this.$curMat.dataKey]){ // Get exhausts and weapon positions
-		o = [{n:"-",ind:0,pos:[0,0,0],size:[0,0,0]}];
+		var o = [{n:"-",ind:0,pos:[0,0,0],size:[0,0,0]}];
 		if(this.$curMat.sd.exhaust) o = o.concat(this._extPosData(this.$curMat.sd.exhaust,"EX"));
 		if(this.$curMat.sd.weapon_position_aft) o = o.concat(this._extPosData(this.$curMat.sd.weapon_position_aft,"WPAFT"));
 		if(this.$curMat.sd.weapon_position_forward) o = o.concat(this._extPosData(this.$curMat.sd.weapon_position_forward,"WPFOR"));
@@ -260,7 +265,6 @@ this._getModelData = function(obj){
 		if(this.$curMat.sd.weapon_position_starboard) o = o.concat(this._extPosData(this.$curMat.sd.weapon_position_starboard,"WPSTAR"));
 		this.$storedPos[this.$curMat.dataKey] = o;
 	}
-	this._showModel();
 };
 this._extPosData = function(obj,id){
 	var a,i,r = [];
@@ -296,7 +300,7 @@ this._showGenerate = function(){
 	head.choices.GAAA = "Generate materials entry";
 	if(this.$curMat.sd.subentities){
 		head.choices.GALS = "Write subentities to Latest.log";
-		head.message += "\n"+expandMissionText("LIB_MATF_NOMAT_UPD");
+		head.message += "\n\n"+expandMissionText("LIB_MATF_NOMAT_UPD");
 	}
 	head.background = {name:"lib_bg.png",height:512};
 	mission.runScreen(head,this._generateChoices);
@@ -319,11 +323,17 @@ this._setMatName = function(){
 };
 this._generatedChoices = function(choice){
 	switch(choice){
-		case "": this._showStart(); break;
+		case "":
+			if(this.$finder.gen){
+				this.$finder.gen = null;
+				this._showModel();
+			} else this._showStart();
+			break;
 		default:
-			this.$storedMats[this.$curMat.dataKey] = {};
-			this.$storedMats[this.$curMat.dataKey][choice] = {};
+			if(!this.$storedMats[this.$curMat.dataKey]) this.$storedMats[this.$curMat.dataKey] = {};
+			if(!this.$storedMats[this.$curMat.dataKey][choice]) this.$storedMats[this.$curMat.dataKey][choice] = {};
 			this.$curMat.matIndName = choice;
+			this._getPosData();
 			this._showModel();
 	}
 };
@@ -371,19 +381,16 @@ this._setModelHead = function(){
 				break;
 		}
 	} else {
-		if(typeof(c.sd.materials)==="object"){
-			c.sdKeys = Object.keys(c.sd.materials);
-			if(c.sdKeys.length && c.sdKeys.length>1) hc.YYYA = "Next material";
-		}
+		if(this.$storedMats[cmd] && Object.keys(this.$storedMats[cmd]).length>1) hc.YYYA = "Next material";
 		switch(f.modelCHCInd){
 			case 0:
+				if(f.mode==="posShader" && this.$storedPos[cmd] && this.$storedPos[cmd].length) hc.PSPS = "Cycle positions";
+				hc.XXLG = "Write to Latest.log";
 				hc.YYYC = "Subentities: "+(!f.modelNoSub);
 				hc.YYYD = "Mode: "+f.modeNames[f.modeInd];
 				hc.YYYE = "Spin model: "+f.modelSpin;
 				hc.YYYF = "Closeup: "+(f.modelCloseUp?" :"+f.modelCloseUps[f.modelCloseUpInd]:"Off");
 				hc.YYYG = "Next";
-				hc.XXLG = "Write to Latest.log";
-				if(f.mode==="posShader" && this.$storedPos[cmd] && this.$storedPos[cmd].length) hc.PSPS = "Cycle positions";
 				break;
 			case 1:
 				hc.YYOA = "Rear";
@@ -447,6 +454,10 @@ this._setModelHead = function(){
 				hc.YYYG = "Next";
 				break;
 			case 5:
+				if(f.mode==="model"){
+					hc.GENM = "Generate new material";
+					hc.YHLM = "Hightlight material";
+				}
 				if(f.mode==="posShader"){
 					hc.PSSA = "Increase Size X";
 					hc.PSSB = "Decrease Size X";
@@ -631,10 +642,8 @@ this._modelChoices = function(choice){
 	this.$finder.modelHead.initialChoicesKey = choice;
 	switch(choice){
 		case "YYYA": // Next material
-			if(c.sd.materials){
-				c.matInd++;
-				if(c.matInd>Object.keys(c.sd.materials).length-1) c.matInd = 0;
-			} else c.matInd = 0;
+			c.matInd++;
+			if(c.matInd>Object.keys(this.$storedMats[c.dataKey]).length-1) c.matInd = 0;
 			s = 1;
 			break;
 		case "ZYYB": // Back
@@ -649,7 +658,6 @@ this._modelChoices = function(choice){
 		case "YYYD": // Toggle modes
 			f.modeInd++;
 			if(f.modeInd>f.modes.length-1) f.modeInd = 0;
-//			this.$finder.modelHighlightActive = !this.$finder.modelHighlightActive;
 			f.mode = f.modes[f.modeInd];
 			s = 1;
 			break;
@@ -674,6 +682,14 @@ this._modelChoices = function(choice){
 				case "posShader": this._writeLog(3); break;
 			}
 			s = 1;
+			break;
+		case "YHLM": // Hightlight
+			this.$finder.modelHighlightActive = !this.$finder.modelHighlightActive;
+			s = 1;
+			break;
+		case "GENM":
+			f.gen = "material";
+			this._setMatName();
 			break;
 		case "YYOA": // Orientations
 		case "YYOB":
@@ -1052,6 +1068,7 @@ this._writeLog = function(mode){
 			case 1: this.$matLog.push("\""+mk[i]+"\""+" = {"); ek = Object.keys(m[mk[i]]).sort(); break;
 			case 2: this.$matLog.push("{"); ek = Object.keys(m[mk[i]]); break;
 		}
+		// sort ek?
 		for(var j=0;j<ek.length;j++){
 			t = this[where][ek[j]];
 			ev = m[mk[i]][ek[j]];
