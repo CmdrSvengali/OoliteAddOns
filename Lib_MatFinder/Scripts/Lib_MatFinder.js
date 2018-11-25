@@ -8,6 +8,7 @@ this.name = "Lib_MatFinder";
 this.$curMat = {};
 this.$storedMats = {};
 this.$storedTex = {};
+this.$storedPos = {};
 this.$defsM = {
 	ambient_color: {def:[1.0,1.0,1.0,1.0], typ:"array", use:"Color", range:[0,255]},
 	anisotropy: {def:0.5, typ:"number", use:"Modifier", range:[0,1], nick:"an"},
@@ -145,13 +146,14 @@ this.$finder = {
 		z: {ind:1,val:[100,10,1,0.1,0.01]}
 	},
 	oriAmount: {
-		x: {ind:1,val:[100,10,1,0.1,0.01]},
-		y: {ind:1,val:[100,10,1,0.1,0.01]},
-		z: {ind:1,val:[100,10,1,0.1,0.01]}
+		x: {ind:1,val:[90,10,1,0.1,0.01]},
+		y: {ind:1,val:[90,10,1,0.1,0.01]},
+		z: {ind:1,val:[90,10,1,0.1,0.01]}
 	},
 	shadePos: [0,0,0],
+	shadePosInd: 0,
 	shadeOri: [1,0,0,0],
-	shadeSize: [0,0,0,1],
+	shadeSize: [0,0,0],
 	shaderLevel: 0,
 	sizeX: 0,
 	sizeY: 0,
@@ -230,7 +232,7 @@ this._pageChoices = function(choice){
 	}
 };
 this._getModelData = function(obj){
-	var t1=[],t2=[],t3;
+	var i,t1=[],t2=[],t3,o;
 	this.$curMat.sd = Ship.shipDataForKey(obj);
 	if(!this.$curMat.sd){
 		this._showStart();
@@ -242,16 +244,41 @@ this._getModelData = function(obj){
 		this._showGenerate();
 		return;
 	}
-	if(!this.$storedTex[this.$curMat.dataKey]){
-		if(this.$curMat.sd.materials) t1 = this._extData(this.$curMat.sd.materials);
-		if(this.$curMat.sd.shaders) t2 = this._extData(this.$curMat.sd.shaders);
+	if(!this.$storedTex[this.$curMat.dataKey]){ // Get textures
+		if(this.$curMat.sd.materials) t1 = this._extTexData(this.$curMat.sd.materials);
+		if(this.$curMat.sd.shaders) t2 = this._extTexData(this.$curMat.sd.shaders);
 		t3 = t1.concat(t2);
 		t3 = this._aid.arrUnique(t3);
 		this.$storedTex[this.$curMat.dataKey] = t3;
 	}
+	if(!this.$storedPos[this.$curMat.dataKey]){ // Get exhausts and weapon positions
+		o = [{n:"-",ind:0,pos:[0,0,0],size:[0,0,0]}];
+		if(this.$curMat.sd.exhaust) o = o.concat(this._extPosData(this.$curMat.sd.exhaust,"EX"));
+		if(this.$curMat.sd.weapon_position_aft) o = o.concat(this._extPosData(this.$curMat.sd.weapon_position_aft,"WPAFT"));
+		if(this.$curMat.sd.weapon_position_forward) o = o.concat(this._extPosData(this.$curMat.sd.weapon_position_forward,"WPFOR"));
+		if(this.$curMat.sd.weapon_position_port) o = o.concat(this._extPosData(this.$curMat.sd.weapon_position_port,"WPPORT"));
+		if(this.$curMat.sd.weapon_position_starboard) o = o.concat(this._extPosData(this.$curMat.sd.weapon_position_starboard,"WPSTAR"));
+		this.$storedPos[this.$curMat.dataKey] = o;
+	}
 	this._showModel();
 };
-this._extData = function(obj){
+this._extPosData = function(obj,id){
+	var a,i,r = [];
+	if(typeof(obj)==="string"){
+		a = obj.replace(/\s{1,99}/gi," ");
+		a = a.split(" ");
+		if(a.length===3) r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[0.1,0.1,0]});
+	} else {
+		for(i=0;i<obj.length;i++){
+			a = obj[i].replace(/\s{1,99}/gi," ");
+			a = a.split(" ");
+			if(a.length===3) r.push({n:id+i,ind:i,pos:[a[0],a[1],a[2]],size:[0,0,0]});
+			else r.push({n:id+i,ind:i,pos:[a[0],a[1],a[2]],size:[a[3],a[4],1]});
+		}
+	}
+	return r;
+};
+this._extTexData = function(obj){
 	var mn,t1,t2,r = [];
 	mn = Object.keys(obj);
 	for(var i=0;i<mn.length;i++){
@@ -356,6 +383,7 @@ this._setModelHead = function(){
 				hc.YYYF = "Closeup: "+(f.modelCloseUp?" :"+f.modelCloseUps[f.modelCloseUpInd]:"Off");
 				hc.YYYG = "Next";
 				hc.XXLG = "Write to Latest.log";
+				if(f.mode==="posShader" && this.$storedPos[cmd] && this.$storedPos[cmd].length) hc.PSPS = "Cycle positions";
 				break;
 			case 1:
 				hc.YYOA = "Rear";
@@ -432,11 +460,14 @@ this._setModelHead = function(){
 				break;
 		}
 	}
-	head.choices = hc;
+	switch(f.mode){
+		case "model": break;
+		case "posShader": head.background = {name:"Lib_MatFinder_BG_Pos.png",height:512}; break;
+	}
 	return head;
 };
 this._showModel = function(){
-	var mat,matKeys,md,mki,newMat,high,
+	var i,mat,matKeys,md,mki,newMat,high,xyz,
 		head = this._setModelHead(),
 		cdk = this.$curMat.dataKey,
 		f = this.$finder;
@@ -463,7 +494,7 @@ this._showModel = function(){
 			matKeys = Object.keys(mat);
 			if(this.$storedMats[cdk]) mat = this._aid.objClone(this.$storedMats[cdk]);
 			else {
-				for(var i=0;i<matKeys.length;i++) mki = matKeys[i];
+				for(i=0;i<matKeys.length;i++) mki = matKeys[i];
 				this.$storedMats[cdk] = mat;
 			}
 			mki = matKeys[this.$curMat.matInd];
@@ -475,34 +506,42 @@ this._showModel = function(){
 			else this.$storedMats[cdk] = mat;
 			this.$curMat.matIndName = mki;
 		}
-		newMat = this._parseMaterial(mat[mki]);
-		this._displayMaterial(newMat);
-		if(f.mode==="posShader"){
-			high = this._aid.objClone(mat);
-			high[mki].vertex_shader = this.$posShader.vertex_shader;
-			high[mki].fragment_shader = this.$posShader.fragment_shader;
-			if(mat[mki].diffuse_map) high[mki].textures = [mat[mki].diffuse_map];
-			else high[mki].textures = this.$posShader.textures;
-			high[mki].uniforms = this.$posShader.uniforms;
-			high[mki].uniforms.pos.value = f.shadePos;
-			high[mki].uniforms.ori.value = f.shadeOri;
-			high[mki].uniforms.size.value = f.shadeSize;
-			high[mki].uniforms.size.value[0] = f.sizeX;
-			high[mki].uniforms.size.value[1] = f.sizeY;
-			md.setMaterials(high,{});
-		} else {
-			if(f.modelNoShade){
-				if(mat[mki].vertex_shader) delete mat[mki].vertex_shader;
-				if(mat[mki].fragment_shader) delete mat[mki].fragment_shader;
-				if(mat[mki].textures) delete mat[mki].textures;
-				if(mat[mki].uniforms) delete mat[mki].uniforms;
-			}
-			if(f.modelHighlightActive){
+		switch(f.mode){
+			case "model":
+				newMat = this._parseMaterial(mat[mki]);
+				this._displayMaterial(newMat);
+				if(f.modelNoShade){
+					if(mat[mki].vertex_shader) delete mat[mki].vertex_shader;
+					if(mat[mki].fragment_shader) delete mat[mki].fragment_shader;
+					if(mat[mki].textures) delete mat[mki].textures;
+					if(mat[mki].uniforms) delete mat[mki].uniforms;
+				}
+				if(f.modelHighlightActive){
+					high = this._aid.objClone(mat);
+					high[mki].emission_color = [1,0,0,1];
+					high[mki].emission_map = null;
+					md.setMaterials(high,{});
+				} else md.setMaterials(mat,{});
+				break;
+			case "posShader":
 				high = this._aid.objClone(mat);
-				high[mki].emission_color = [1,0,0,1];
-				high[mki].emission_map = null;
+				high[mki].vertex_shader = this.$posShader.vertex_shader;
+				high[mki].fragment_shader = this.$posShader.fragment_shader;
+				if(mat[mki].diffuse_map) high[mki].textures = [mat[mki].diffuse_map];
+				else high[mki].textures = this.$posShader.textures;
+				high[mki].uniforms = this.$posShader.uniforms;
+				high[mki].uniforms.pos.value = f.shadePos;
+				high[mki].uniforms.ori.value = f.shadeOri;
+				high[mki].uniforms.size.value = f.shadeSize;
+				high[mki].uniforms.size.value[0] = f.sizeX;
+				high[mki].uniforms.size.value[1] = f.sizeY;
 				md.setMaterials(high,{});
-			} else md.setMaterials(mat,{});
+				xyz = this.$finder.shadePos;
+				for(i=0;i<xyz.length;i++) xyz[i] = this._aid.toPrec(xyz[i],4);
+				mission.addMessageText(this.$finder.shadePos);
+				mission.addMessageText("X:"+this._aid.toPrec(this.$finder.sizeX,4)+" Y:"+this._aid.toPrec(this.$finder.sizeY,4));
+				if(this.$storedPos[cdk] && this.$storedPos[cdk][f.shadePosInd]) mission.addMessageText("Ind:"+this.$storedPos[cdk][f.shadePosInd].n);
+				break;
 		}
 	}
 };
@@ -583,12 +622,6 @@ this._displayMaterial = function(mat){
 	mission.addMessageText(
 		this._aid.scrToWidth(""+(mat.shininess ? mat.shininess : "-"),20," ")+
 		this._aid.scrToWidth(""+(mat.parallax_scale ? mat.parallax_scale : "-"),11,0,0,1));
-	if(this.$finder.mode==="posShader"){
-		xyz = this.$finder.shadePos;
-		for(i=0;i<xyz.length;i++) xyz[i] = this._aid.toPrec(xyz[i],4);
-		mission.addMessageText("Position: "+this.$finder.shadePos);
-		mission.addMessageText("Size: X:"+this._aid.toPrec(this.$finder.sizeX,4)+" Y:"+this._aid.toPrec(this.$finder.sizeY,4));
-	}
 	if(this.$finder.mode==="model") for(i=0;i<mat.MTX.length;i++) mission.addMessageText(this._aid.scrToWidth(mat.MTX[i],22," "));
 };
 this._modelChoices = function(choice){
@@ -606,6 +639,7 @@ this._modelChoices = function(choice){
 			break;
 		case "ZYYB": // Back
 			f.modelCurMod = null;
+			f.shadePosInd = 0;
 			this._showStart();
 			break;
 		case "YYYC": // Toggle subEntities
@@ -614,7 +648,7 @@ this._modelChoices = function(choice){
 			break;
 		case "YYYD": // Toggle modes
 			f.modeInd++;
-			if(f.modeInd>1) f.modeInd = 0;
+			if(f.modeInd>f.modes.length-1) f.modeInd = 0;
 //			this.$finder.modelHighlightActive = !this.$finder.modelHighlightActive;
 			f.mode = f.modes[f.modeInd];
 			s = 1;
@@ -625,7 +659,7 @@ this._modelChoices = function(choice){
 			break;
 		case "YYYF": // Toggle closeup
 			f.modelCloseUpInd++;
-			if(f.modelCloseUpInd>4) f.modelCloseUpInd = 0;
+			if(f.modelCloseUpInd>f.modelCloseUps.length-1) f.modelCloseUpInd = 0;
 			f.modelCloseUp = f.modelCloseUps[f.modelCloseUpInd];
 			s = 1;
 			break;
@@ -729,6 +763,14 @@ this._modelChoices = function(choice){
 			f.modelCurMod = "modelMap";
 			s = 1;
 			break;
+		case "PSPS": // Cycle positions
+			f.shadePosInd++;
+			if(f.shadePosInd>this.$storedPos[c.dataKey].length-1) f.shadePosInd = 0;
+			f.shadePos = this.$storedPos[c.dataKey][f.shadePosInd].pos;
+			f.sizeX = this.$storedPos[c.dataKey][f.shadePosInd].size[0];
+			f.sizeY = this.$storedPos[c.dataKey][f.shadePosInd].size[1];
+			s = 1;
+			break;
 		case "PSXA": // Increase X
 			f.shadePos[0] += f.moveAmount.x.val[f.moveAmount.x.ind];
 			s = 1;
@@ -739,7 +781,7 @@ this._modelChoices = function(choice){
 			break;
 		case "PSXC": // Amount X
 			f.moveAmount.x.ind++;
-			if(f.moveAmount.x.ind>4) f.moveAmount.x.ind = 0;
+			if(f.moveAmount.x.ind>f.moveAmount.x.val.length-1) f.moveAmount.x.ind = 0;
 			s = 1;
 			break;
 		case "PSYA": // Increase Y
@@ -752,7 +794,7 @@ this._modelChoices = function(choice){
 			break;
 		case "PSYC": // Amount Y
 			f.moveAmount.y.ind++;
-			if(f.moveAmount.y.ind>4) f.moveAmount.y.ind = 0;
+			if(f.moveAmount.y.ind>f.moveAmount.y.val.length-1) f.moveAmount.y.ind = 0;
 			s = 1;
 			break;
 		case "PSZA": // Increase Z
@@ -765,7 +807,7 @@ this._modelChoices = function(choice){
 			break;
 		case "PSZC": // Amount Z
 			f.moveAmount.z.ind++;
-			if(f.moveAmount.z.ind>4) f.moveAmount.z.ind = 0;
+			if(f.moveAmount.z.ind>f.moveAmount.z.val.length-1) f.moveAmount.z.ind = 0;
 			s = 1;
 			break;
 		case "PSZZ": // Reset position
@@ -783,7 +825,7 @@ this._modelChoices = function(choice){
 			break;
 		case "PSSC": // Amount Size X
 			f.sizeXInd++;
-			if(f.sizeXInd>f.sizes.length) f.sizeXInd = 0;
+			if(f.sizeXInd>f.sizes.length-1) f.sizeXInd = 0;
 			s = 1;
 			break;
 		case "PSSD": // Increase Size Y
@@ -797,7 +839,7 @@ this._modelChoices = function(choice){
 			break;
 		case "PSSF": // Amount Size
 			f.sizeYInd++;
-			if(f.sizeYInd>f.sizes.length) f.sizeYInd = 0;
+			if(f.sizeYInd>f.sizes.length-1) f.sizeYInd = 0;
 			s = 1;
 			break;
 		case "PSSZ": // Reset Size
@@ -1089,4 +1131,8 @@ this._writeLog = function(mode){
 	if(this.$finder.logCompact) log(this.name,this.$matLog.join("").replace(/\s/g,""));
 	else log(this.name,this.$matLog.join(""));
 };
+// Convert degrees to radians.
+this._radians = function(degrees){return degrees*Math.PI/180;}; 
+// Convert radians to degrees.
+this._degrees = function(radians){return radians*180/Math.PI;};
 }).call(this);
