@@ -99,8 +99,8 @@ this.$defsSub = {
 };
 this.$defMat = {};
 this.$posShader = {
-	vertex_shader: "Lib_Matfinder_pos.vs",
-	fragment_shader: "Lib_Matfinder_pos.fs",
+	vertex_shader: "Lib_MatFinder_pos.vs",
+	fragment_shader: "Lib_MatFinder_pos.fs",
 	textures: ["lib_null.png"],
 	uniforms: {
 		tex0: {type:"texture",value:0},
@@ -1071,9 +1071,8 @@ this._writeLog = function(mode){
 	for(var i=0;i<mk.length;i++){
 		switch(mode){
 			case 1: this.$matLog.push("\""+mk[i]+"\""+" = {"); ek = Object.keys(m[mk[i]]).sort(); break;
-			case 2: this.$matLog.push("{"); ek = Object.keys(m[mk[i]]); break;
+			case 2: this.$matLog.push("{"); ek = Object.keys(m[mk[i]]).sort(function(a,b){if(a>b)return -1;if(b>a) return 1; return 0;}); break;
 		}
-		// sort ek?
 		for(var j=0;j<ek.length;j++){
 			t = this[where][ek[j]];
 			ev = m[mk[i]][ek[j]];
