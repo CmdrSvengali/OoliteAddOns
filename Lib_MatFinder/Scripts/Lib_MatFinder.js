@@ -173,6 +173,7 @@ this.$finder = {
 	modelCurMod: null,
 	modelOri: [0,0,1,0],
 	modelOris: {YYOA:[1,0,0,0],YYOB:[1,1,1,0],YYOC:[0,0,1,0],YYOD:[-1,1,0,0],YYOE:[1,1,0,0],YYOF:[1,0,1,0],YYOG:[-1,0,1,0]},
+	modelOrisUser: {ind:0,val:[[1,1,1,0],[1,-1,0,1],[-1,1,1,0],[1,1,0,1]]},
 	modelMap: null,
 	modelMaps: {YYMA:"diffuse_map",YYMB:"emission_and_illumination_map",YYMC:"emission_map",YYMD:"illumination_map",YYME:"normal_and_parallax_map",YYMF:"normal_map",YYMG:"specular_map"},
 	modelMapMod: null,
@@ -394,7 +395,7 @@ this._setModelHead = function(){
 				break;
 			case 1:
 				hc.YYOA = "Rear";
-				hc.YYOB = "User";
+				hc.YYOB = "User >";
 				hc.YYOC = "Front";
 				hc.YYOD = "Bottom";
 				hc.YYOE = "Top";
@@ -699,7 +700,11 @@ this._modelChoices = function(choice){
 		case "YYOF":
 		case "YYOG":
 			f.modelSpin = false;
-			f.modelOri = f.modelOris[choice];
+			if(choice==="YYOB"){
+				f.modelOri = f.modelOrisUser.val[f.modelOrisUser.ind];
+				f.modelOrisUser.ind++;
+				if(f.modelOrisUser.ind>f.modelOrisUser.val.length-1) f.modelOrisUser.ind = 0;
+			} else f.modelOri = f.modelOris[choice];
 			s = 1;
 			break;
 		case "YYMA": // Maps
