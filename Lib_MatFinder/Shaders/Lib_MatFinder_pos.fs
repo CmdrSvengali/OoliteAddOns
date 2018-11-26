@@ -1,7 +1,8 @@
+// 16 ALU, 16 C, 3 CF (RV610)
 varying vec2 vTexCoord;
 varying vec3 vCol,vNormal,vVertex;
 uniform sampler2D tex0;
-uniform vec4 pos,ori,size;
+uniform vec4 pos,size;
 
 void main(){
 	vec3 lightVector = normalize(gl_LightSource[1].position.xyz);
