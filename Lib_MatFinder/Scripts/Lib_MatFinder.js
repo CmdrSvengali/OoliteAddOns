@@ -233,7 +233,7 @@ this._pageChoices = function(choice){
 	}
 };
 this._getModelData = function(obj){
-	var i,t1=[],t2=[],t3,o;
+	var t1=[],t2=[],t3;
 	this.$curMat.sd = Ship.shipDataForKey(obj);
 	if(!this.$curMat.sd){
 		this._showStart();
@@ -605,7 +605,7 @@ this._parseMaterial = function(mat){
 	return nm;
 };
 this._displayMaterial = function(mat){
-	var i,xyz;
+	var i;
 	mission.addMessageText(
 		this._aid.scrToWidth(""+(mat.diffuse_map ? mat.diffuse_map : "-"),20," ")+
 		this._aid.scrToWidth(""+(mat.ambient_color ? mat.ambient_color : "-"),11,0,0,1));
@@ -871,7 +871,7 @@ this._modelChoices = function(choice){
 };
 this._enterValue = function(){
 	var head = this._aid.objClone(this.$finder.pageHead),
-		cur,ex,exa,exb,l,m,tmp,
+		ex,exa,l,m,tmp,
 		mcm = this.$finder.modelCurMod,
 		dtk = this.$curMat.dataKey;
 	head.title = "Model: "+dtk+" - M:"+this.$curMat.matInd;
@@ -1053,7 +1053,7 @@ this._valueChoices = function(choice){
 	this._showModel();
 };
 this._writeLog = function(mode){
-	var m,where,sep;
+	var m,where;
 	switch(mode){
 		case 1: m = this.$storedMats[this.$curMat.dataKey]; where = "$defsM"; this.$matLog = ["materials = {"]; break;
 		case 2: m = this.$curMat.sd.subentities; where = "$defsSub"; this.$matLog = ["subentities = ("]; break;
