@@ -105,7 +105,6 @@ this.$posShader = {
 	uniforms: {
 		tex0: {type:"texture",value:0},
 		pos: {type:"vector",value:[0,0,0],normalized:false},
-		ori: {type:"vector",value:[0,0,0],normalized:false},
 		size: {type:"vector",value:[0,0,0],normalized:false}
 	}
 };
@@ -153,8 +152,6 @@ this.$finder = {
 	},
 	shadePos: [0,0,0],
 	shadePosInd: 0,
-	shadeOri: [1,0,0,0],
-	shadeSize: [0,0,0],
 	shaderLevel: 0,
 	sizeX: 0,
 	sizeY: 0,
@@ -543,10 +540,7 @@ this._showModel = function(){
 				else high[mki].textures = this.$posShader.textures;
 				high[mki].uniforms = this.$posShader.uniforms;
 				high[mki].uniforms.pos.value = f.shadePos;
-				high[mki].uniforms.ori.value = f.shadeOri;
-				high[mki].uniforms.size.value = f.shadeSize;
-				high[mki].uniforms.size.value[0] = f.sizeX;
-				high[mki].uniforms.size.value[1] = f.sizeY;
+				high[mki].uniforms.size.value = [f.sizeX,f.sizeY,(parseFloat(f.sizeX)+parseFloat(f.sizeY))*0.5];
 				md.setMaterials(high,{});
 				xyz = this.$finder.shadePos;
 				for(i=0;i<xyz.length;i++) xyz[i] = this._aid.toPrec(xyz[i],4);
@@ -788,8 +782,8 @@ this._modelChoices = function(choice){
 			f.shadePosInd++;
 			if(f.shadePosInd>this.$storedPos[c.dataKey].length-1) f.shadePosInd = 0;
 			f.shadePos = this.$storedPos[c.dataKey][f.shadePosInd].pos;
-			f.sizeX = this.$storedPos[c.dataKey][f.shadePosInd].size[0];
-			f.sizeY = this.$storedPos[c.dataKey][f.shadePosInd].size[1];
+			f.sizeX = parseFloat(this.$storedPos[c.dataKey][f.shadePosInd].size[0]);
+			f.sizeY = parseFloat(this.$storedPos[c.dataKey][f.shadePosInd].size[1]);
 			s = 1;
 			break;
 		case "PSXA": // Increase X
