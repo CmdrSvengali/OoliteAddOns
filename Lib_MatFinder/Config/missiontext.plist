@@ -1,7 +1,7 @@
 {
 	LIB_MATF_NOMAT = "This model doesn't have a materials definition,\nbut you can gererate a definition for it.\n\nAll you need to know is what the .dat file uses.";
 	LIB_MATF_NOMAT_UPD = "Writing the subentities to the logfile offers an easy way to update oldstyle declarations.";
-	LIB_MATF_GENMAT = "Enter the materials name.\n\nThe name must match the definition in the .dat file exactly.\n\nLeave empty to return.";
+	LIB_MATF_GENMAT = "Enter the materials name.\n\nThe name must match the definition in the .dat file exactly.\nIf it doesn't, your generated material won't have any effect.\n\nIt's also necessary that the model has texture coordinates.\n\nLeave empty to return.";
 	LIB_MATFS_ambient_color = "The ambient colour is the colour reflected evenly in all directions by starlight.\nIf there is a diffuse_map, the ambient_color is modulated by the diffuse_map.\nDefault: white (1.0, 1.0, 1.0, 1.0).";
 	LIB_MATFS_anisotropy = "The degree of anisotropic filtering to use. Anisotropic filtering is used to reduce blurriness of MIP mapped textures shown at an angle (only applies to textures whose min_filter is mipmap or default). The anisotropy setting is multiplied by the maximum anisotropy level specified by the system, and anisotropic filtering is used only if the result is greater than 1. Default: 0.5.";
 	LIB_MATFS_cube_map = "If this is true, and the texture file is six times as high as it is wide, the texture will be treated as a cube map. If cube maps are not supported, it will be converted to a latitude/longitude map. If used as a diffuse map or emission/illumination map, you must ensure the model has appropriate texture coordinates.";
