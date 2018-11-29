@@ -97,6 +97,12 @@ this.$defsSub = {
 	weapon_energy: {def:25, typ:"number", use:"SubEnt", range:[0,100]},
 	weapon_range: {def:6000, typ:"number", use:"SubEnt", range:[0,7500]}
 };
+this.$defsEx = {
+	n: {def:"-", typ:"string", use:""},
+	ind: {def:0, typ:"number", use:""},
+	pos: {def:[0,0,0], typ:"array", use:"Pos"},
+	size: {def:[0,0,0], typ:"array", use:"Pos"}
+};
 this.$defMat = {};
 this.$posShader = {
 	vertex_shader: "Lib_MatFinder_pos.vs",
@@ -254,13 +260,15 @@ this._getModelData = function(obj){
 	this._showModel();
 };
 this._getPosData = function(){
-	if(!this.$storedPos[this.$curMat.dataKey]){ // Get exhausts and weapon positions
-		var o = [{n:"-",ind:0,pos:[0,0,0],size:[0,0,0]}];
-		if(this.$curMat.sd.exhaust) o = o.concat(this._extPosData(this.$curMat.sd.exhaust,"EX"));
-		if(this.$curMat.sd.weapon_position_aft) o = o.concat(this._extPosData(this.$curMat.sd.weapon_position_aft,"WPAFT"));
-		if(this.$curMat.sd.weapon_position_forward) o = o.concat(this._extPosData(this.$curMat.sd.weapon_position_forward,"WPFOR"));
-		if(this.$curMat.sd.weapon_position_port) o = o.concat(this._extPosData(this.$curMat.sd.weapon_position_port,"WPPORT"));
-		if(this.$curMat.sd.weapon_position_starboard) o = o.concat(this._extPosData(this.$curMat.sd.weapon_position_starboard,"WPSTAR"));
+	if(!this.$storedPos[this.$curMat.dataKey]){ // Get positions
+		var w = ["exhaust","weapon_position_aft","weapon_position_forward","weapon_position_port","weapon_position_starboard",
+			"aft_eject_position","missile_launch_position","view_position_aft","view_position_forward","view_position_port",
+			"view_position_starboard","scoop_position"],
+			o = [{n:"-",ind:0,pos:[0,0,0],size:[0,0,0]}], t;
+		for(var i=0;i<w.length;i++){
+			t = w[i];
+			if(this.$curMat.sd[t]) o = o.concat(this._extPosData(this.$curMat.sd[t],t));
+		}
 		this.$storedPos[this.$curMat.dataKey] = o;
 	}
 };
@@ -269,13 +277,13 @@ this._extPosData = function(obj,id){
 	if(typeof(obj)==="string"){
 		a = obj.replace(/\s{1,99}/gi," ");
 		a = a.split(" ");
-		if(a.length===3) r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[0.1,0.1,0]});
+		if(a.length===3) r.push({n:id,ind:0,pos:[a[0],a[1],a[2]],size:[0.1,0.1,0]});
 	} else {
 		for(i=0;i<obj.length;i++){
 			a = obj[i].replace(/\s{1,99}/gi," ");
 			a = a.split(" ");
-			if(a.length===3) r.push({n:id+i,ind:i,pos:[a[0],a[1],a[2]],size:[0,0,0]});
-			else r.push({n:id+i,ind:i,pos:[a[0],a[1],a[2]],size:[a[3],a[4],1]});
+			if(a.length===3) r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[0,0,0]});
+			else r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[a[3],a[4],1]});
 		}
 	}
 	return r;
@@ -546,7 +554,7 @@ this._showModel = function(){
 				for(i=0;i<xyz.length;i++) xyz[i] = this._aid.toPrec(xyz[i],4);
 				mission.addMessageText(this.$finder.shadePos);
 				mission.addMessageText("X:"+this._aid.toPrec(this.$finder.sizeX,4)+" Y:"+this._aid.toPrec(this.$finder.sizeY,4));
-				if(this.$storedPos[cdk] && this.$storedPos[cdk][f.shadePosInd]) mission.addMessageText("Ind:"+this.$storedPos[cdk][f.shadePosInd].n);
+				if(this.$storedPos[cdk] && this.$storedPos[cdk][f.shadePosInd]) mission.addMessageText(this.$storedPos[cdk][f.shadePosInd].n+":"+this.$storedPos[cdk][f.shadePosInd].ind);
 				break;
 		}
 	}
@@ -631,6 +639,13 @@ this._displayMaterial = function(mat){
 	if(this.$finder.mode==="model") for(i=0;i<mat.MTX.length;i++) mission.addMessageText(this._aid.scrToWidth(mat.MTX[i],22," "));
 };
 this._modelChoices = function(choice){
+/*
+	var md = mission.displayModel;
+	if(md){
+		if(md.position) log("","POS:"+mission.displayModel.position);
+		if(md.orientation) log("","ORI:"+mission.displayModel.orientation);
+	}
+*/
 	var tr,s,
 		c = this.$curMat,
 		f = this.$finder;
@@ -674,7 +689,7 @@ this._modelChoices = function(choice){
 		case "XXLG": // to Latest.log
 			switch(f.mode){
 				case "model": this._writeLog(1); break;
-				case "posShader": this._writeLog(3); break;
+				case "posShader": this._writePos(3); break;
 			}
 			s = 1;
 			break;
@@ -1056,9 +1071,6 @@ this._writeLog = function(mode){
 	switch(mode){
 		case 1: m = this.$storedMats[this.$curMat.dataKey]; where = "$defsM"; this.$matLog = ["materials = {"]; break;
 		case 2: m = this.$curMat.sd.subentities; where = "$defsSub"; this.$matLog = ["subentities = ("]; break;
-		case 3: 
-			log(this.name,"Entry for "+this.$curMat.dataKey+": Position: "+this.$finder.shadePos+" - Size: X:"+this._aid.toPrec(this.$finder.sizeX,4)+" Y:"+this._aid.toPrec(this.$finder.sizeY,4));
-			return;
 	}
 	var mk = Object.keys(m),
 		ek,ev,fk,fv,k,t,tm,tp;
@@ -1145,6 +1157,51 @@ this._writeLog = function(mode){
 	log(this.name,"Entry for "+this.$curMat.dataKey+":");
 	if(this.$finder.logCompact) log(this.name,this.$matLog.join("").replace(/\s/g,""));
 	else log(this.name,this.$matLog.join(""));
+};
+this._writePos = function(){
+	var w = this.$storedPos[this.$curMat.dataKey], // array
+		pos = [
+			["aft_eject_position = "],
+			["exhaust = ("],
+			["missile_launch_position = "],
+			["scoop_position = "],
+			["view_position_aft = "],
+			["view_position_forward = "],
+			["view_position_port = "],
+			["view_position_starboard = "],
+			["weapon_position_aft = "],
+			["weapon_position_forward = "],
+			["weapon_position_port = "],
+			["weapon_position_starboard = "]
+		],s,ind,sep,j,k;
+	for(var i=1;i<w.length;i++){
+		s = 0; ind = 0; sep = 0;
+		switch(w[i].n){
+			case "aft_eject_position": ind = 0; break;
+			case "exhaust": s = 1; ind = 1; break;
+			case "missile_launch_position": ind = 2; break;
+			case "scoop_position": ind = 3; break;
+			case "view_position_aft": ind = 4; break;
+			case "view_position_forward": ind = 5; break;
+			case "view_position_port": ind = 6; break;
+			case "view_position_starboard": ind = 7; break;
+			case "weapon_position_aft": ind = 8; sep = 1; break;
+			case "weapon_position_forward": ind = 9; sep = 1; break;
+			case "weapon_position_port": ind = 10; sep = 1; break;
+			case "weapon_position_starboard": ind = 11; sep = 1; break;
+		}
+		if(sep && w[i].ind===1) pos[ind][0] += "(";
+		if(w[i].ind) pos[ind].push(",");
+		if(s) pos[ind].push("\""+w[i].pos[0]+" "+w[i].pos[1]+" "+w[i].pos[2]+" "+w[i].size[0]+" "+w[i].size[1]+" 1\"");
+		else pos[ind].push("\""+w[i].pos[0]+" "+w[i].pos[1]+" "+w[i].pos[2]+"\"");
+	}
+	pos[1].push(")");
+	for(j=0;j<12;j++){
+		if(j>7 && pos[j].length>2) pos[j].push(");");
+		else pos[j].push(";");
+	}
+	log(this.name,"Entry for "+this.$curMat.dataKey+":");
+	for(k=0;k<12;k++) if((k!==1 && pos[k].length>2) || (k===1 && pos[k].length>3)) log(this.name,pos[k].join(""));
 };
 // Convert degrees to radians.
 this._radians = function(degrees){return degrees*Math.PI/180;}; 
