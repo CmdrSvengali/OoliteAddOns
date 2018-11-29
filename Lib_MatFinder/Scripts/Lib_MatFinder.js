@@ -275,12 +275,12 @@ this._getPosData = function(){
 this._extPosData = function(obj,id){
 	var a,i,r = [];
 	if(typeof(obj)==="string"){
-		a = obj.replace(/\s{1,99}/gi," ");
+		a = obj.replace(/\.\s{1,99}/g,".").replace(/\s{1,99}/g," ");
 		a = a.split(" ");
 		if(a.length===3) r.push({n:id,ind:0,pos:[a[0],a[1],a[2]],size:[0.1,0.1,0]});
 	} else {
 		for(i=0;i<obj.length;i++){
-			a = obj[i].replace(/\s{1,99}/gi," ");
+			a = obj[i].replace(/\.\s{1,99}/g,".").replace(/\s{1,99}/g," ");
 			a = a.split(" ");
 			if(a.length===3) r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[0,0,0]});
 			else r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[a[3],a[4],1]});
