@@ -555,6 +555,7 @@ this._showModel = function(){
 				mission.addMessageText(this.$finder.shadePos);
 				mission.addMessageText("X:"+this._aid.toPrec(this.$finder.sizeX,4)+" Y:"+this._aid.toPrec(this.$finder.sizeY,4));
 				if(this.$storedPos[cdk] && this.$storedPos[cdk][f.shadePosInd]) mission.addMessageText(this.$storedPos[cdk][f.shadePosInd].n+":"+this.$storedPos[cdk][f.shadePosInd].ind);
+				mission.addMessageText("Dist: "+this._aid.toPrec(Vector3D(xyz).magnitude()/md.collisionRadius,4));
 				break;
 		}
 	}
