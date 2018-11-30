@@ -1,5 +1,5 @@
 /* jshint bitwise:false, forin:false */
-/* global expandMissionText,log,mission,player,worldScripts,Ship */
+/* global expandMissionText,log,mission,player,worldScripts,Ship,Vector3D */
 /* (C) Svengali 2016-2018, License CC-by-nc-sa-4.0 */
 (function(){
 "use strict";
@@ -111,7 +111,8 @@ this.$posShader = {
 	uniforms: {
 		tex0: {type:"texture",value:0},
 		pos: {type:"vector",value:[0,0,0],normalized:false},
-		size: {type:"vector",value:[0,0,0],normalized:false}
+		size: {type:"vector",value:[0,0,0],normalized:false},
+		radius: "collisionRadius"
 	}
 };
 
@@ -141,9 +142,9 @@ this.$finder = {
 		screenID:this.name
 	},
 	gen: null,
-	mode: "model", // model (default), shaderMat, posShader, shader, subentities, flashers
+	mode: "Mat", // Mat (default), shaderMat, posShader, shader, subentities, flashers
 	modeInd: 0,
-	modes: ["model","posShader"],
+	modes: ["Mat","posShader"],
 	modeNames: ["Materials","Positions"],
 	modePages: [5,5],
 	moveAmount: {
@@ -157,13 +158,18 @@ this.$finder = {
 		z: {ind:1,val:[90,10,1,0.1,0.01]}
 	},
 	shadePos: [0,0,0],
-	shadePosInd: 0,
+	shadePosInd: 1,
 	shaderLevel: 0,
 	sizeX: 0,
 	sizeY: 0,
 	sizeXInd: 1,
 	sizeYInd: 1,
 	sizes: [10,1,0.1,0.01],
+	posNames: ["aft_eject_position","exhaust","missile_launch_position","scoop_position","view_position_aft",
+		"view_position_forward","view_position_port","view_position_starboard","weapon_position_aft",
+		"weapon_position_forward","weapon_position_port","weapon_position_starboard"
+	],
+	posInd: [0,0,0,0,0,0,0,0,0,0,0,0],
 	logCompact: false,
 	modelNoSub: false,
 	modelHighlightActive: false,
@@ -261,29 +267,33 @@ this._getModelData = function(obj){
 };
 this._getPosData = function(){
 	if(!this.$storedPos[this.$curMat.dataKey]){ // Get positions
-		var w = ["exhaust","weapon_position_aft","weapon_position_forward","weapon_position_port","weapon_position_starboard",
-			"aft_eject_position","missile_launch_position","view_position_aft","view_position_forward","view_position_port",
-			"view_position_starboard","scoop_position"],
-			o = [{n:"-",ind:0,pos:[0,0,0],size:[0,0,0]}], t;
+		var w = this.$finder.posNames,
+			o = [{n:"-",ind:0,pos:[0,0,0],size:[0,0,0]}],
+			wi, t;
+		this.$finder.posInd = [0,0,0,0,0,0,0,0,0,0,0,0];
 		for(var i=0;i<w.length;i++){
 			t = w[i];
-			if(this.$curMat.sd[t]) o = o.concat(this._extPosData(this.$curMat.sd[t],t));
+			wi = this.$finder.posNames.indexOf(t);
+			if(this.$curMat.sd[t]) o = o.concat(this._extPosData(this.$curMat.sd[t],t,wi));
 		}
+		o.unshift(this.$finder.posInd);
 		this.$storedPos[this.$curMat.dataKey] = o;
 	}
 };
-this._extPosData = function(obj,id){
+this._extPosData = function(obj,id,wi){
 	var a,i,r = [];
 	if(typeof(obj)==="string"){
 		a = obj.replace(/\.\s{1,99}/g,".").replace(/\s{1,99}/g," ");
 		a = a.split(" ");
 		if(a.length===3) r.push({n:id,ind:0,pos:[a[0],a[1],a[2]],size:[0.1,0.1,0]});
+		this.$finder.posInd[wi]++;
 	} else {
 		for(i=0;i<obj.length;i++){
 			a = obj[i].replace(/\.\s{1,99}/g,".").replace(/\s{1,99}/g," ");
 			a = a.split(" ");
 			if(a.length===3) r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[0,0,0]});
 			else r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[a[3],a[4],1]});
+			this.$finder.posInd[wi]++;
 		}
 	}
 	return r;
@@ -390,7 +400,7 @@ this._setModelHead = function(){
 		if(this.$storedMats[cmd] && Object.keys(this.$storedMats[cmd]).length>1) hc.YYYA = "Next material";
 		switch(f.modelCHCInd){
 			case 0:
-				if(f.mode==="posShader" && this.$storedPos[cmd] && this.$storedPos[cmd].length) hc.PSPS = "Cycle positions";
+				if(f.mode==="posShader" && this.$storedPos[cmd] && this.$storedPos[cmd].length>1) hc.PSPS = "Cycle positions";
 				hc.XXLG = "Write to Latest.log";
 				hc.YYYC = "Subentities: "+(!f.modelNoSub);
 				hc.YYYD = "Mode: "+f.modeNames[f.modeInd];
@@ -409,7 +419,7 @@ this._setModelHead = function(){
 				hc.YYYG = "Next";
 				break;
 			case 2:
-				if(f.mode==="model"){
+				if(f.mode==="Mat"){
 					hc.YYMA = "Change diffuse_map";
 					hc.YYMB = "Change emission_and_illumination_map";
 					hc.YYMC = "Change emission_map";
@@ -427,7 +437,7 @@ this._setModelHead = function(){
 				hc.YYYG = "Next";
 				break;
 			case 3:
-				if(f.mode==="model"){
+				if(f.mode==="Mat"){
 					hc.YYCA = "Change ambient_color";
 					hc.YYCB = "Change diffuse_color";
 					hc.YYCC = "Change emission_color";
@@ -445,7 +455,7 @@ this._setModelHead = function(){
 				hc.YYYG = "Next";
 				break;
 			case 4:
-				if(f.mode==="model"){
+				if(f.mode==="Mat"){
 					hc.YYGA = "Set gloss";
 					hc.YYGB = "Set shininess";
 					hc.YYGC = "Set parallax_bias";
@@ -460,7 +470,7 @@ this._setModelHead = function(){
 				hc.YYYG = "Next";
 				break;
 			case 5:
-				if(f.mode==="model"){
+				if(f.mode==="Mat"){
 					hc.GENM = "Generate new material";
 					hc.YHLM = "Hightlight material";
 				}
@@ -478,7 +488,7 @@ this._setModelHead = function(){
 		}
 	}
 	switch(f.mode){
-		case "model": break;
+		case "Mat": break;
 		case "posShader": head.background = {name:"Lib_MatFinder_BG_Pos.png",height:512}; break;
 	}
 	return head;
@@ -524,7 +534,7 @@ this._showModel = function(){
 			this.$curMat.matIndName = mki;
 		}
 		switch(f.mode){
-			case "model":
+			case "Mat":
 				newMat = this._parseMaterial(mat[mki]);
 				this._displayMaterial(newMat);
 				if(f.modelNoShade){
@@ -548,12 +558,12 @@ this._showModel = function(){
 				else high[mki].textures = this.$posShader.textures;
 				high[mki].uniforms = this.$posShader.uniforms;
 				high[mki].uniforms.pos.value = f.shadePos;
-				high[mki].uniforms.size.value = [f.sizeX,f.sizeY,(parseFloat(f.sizeX)+parseFloat(f.sizeY))*0.5];
+				high[mki].uniforms.size.value = [parseFloat(f.sizeX),parseFloat(f.sizeY),(parseFloat(f.sizeX)+parseFloat(f.sizeY))*0.5];
 				md.setMaterials(high,{});
-				xyz = this.$finder.shadePos;
+				xyz = f.shadePos;
 				for(i=0;i<xyz.length;i++) xyz[i] = this._aid.toPrec(xyz[i],4);
-				mission.addMessageText(this.$finder.shadePos);
-				mission.addMessageText("X:"+this._aid.toPrec(this.$finder.sizeX,4)+" Y:"+this._aid.toPrec(this.$finder.sizeY,4));
+				mission.addMessageText(f.shadePos);
+				mission.addMessageText("X:"+this._aid.toPrec(f.sizeX,4)+" Y:"+this._aid.toPrec(f.sizeY,4));
 				if(this.$storedPos[cdk] && this.$storedPos[cdk][f.shadePosInd]) mission.addMessageText(this.$storedPos[cdk][f.shadePosInd].n+":"+this.$storedPos[cdk][f.shadePosInd].ind);
 				mission.addMessageText("Dist: "+this._aid.toPrec(Vector3D(xyz).magnitude()/md.collisionRadius,4));
 				break;
@@ -637,7 +647,7 @@ this._displayMaterial = function(mat){
 	mission.addMessageText(
 		this._aid.scrToWidth(""+(mat.shininess ? mat.shininess : "-"),20," ")+
 		this._aid.scrToWidth(""+(mat.parallax_scale ? mat.parallax_scale : "-"),11,0,0,1));
-	if(this.$finder.mode==="model") for(i=0;i<mat.MTX.length;i++) mission.addMessageText(this._aid.scrToWidth(mat.MTX[i],22," "));
+	if(this.$finder.mode==="Mat") for(i=0;i<mat.MTX.length;i++) mission.addMessageText(this._aid.scrToWidth(mat.MTX[i],22," "));
 };
 this._modelChoices = function(choice){
 /*
@@ -659,7 +669,7 @@ this._modelChoices = function(choice){
 			break;
 		case "ZYYB": // Back
 			f.modelCurMod = null;
-			f.shadePosInd = 0;
+			f.shadePosInd = 1;
 			this._showStart();
 			break;
 		case "YYYC": // Toggle subEntities
@@ -689,7 +699,7 @@ this._modelChoices = function(choice){
 			break;
 		case "XXLG": // to Latest.log
 			switch(f.mode){
-				case "model": this._writeLog(1); break;
+				case "Mat": this._writeLog(1); break;
 				case "posShader": this._writePos(3); break;
 			}
 			s = 1;
@@ -796,7 +806,7 @@ this._modelChoices = function(choice){
 			break;
 		case "PSPS": // Cycle positions
 			f.shadePosInd++;
-			if(f.shadePosInd>this.$storedPos[c.dataKey].length-1) f.shadePosInd = 0;
+			if(f.shadePosInd>this.$storedPos[c.dataKey].length-1) f.shadePosInd = 1;
 			f.shadePos = this.$storedPos[c.dataKey][f.shadePosInd].pos;
 			f.sizeX = parseFloat(this.$storedPos[c.dataKey][f.shadePosInd].size[0]);
 			f.sizeY = parseFloat(this.$storedPos[c.dataKey][f.shadePosInd].size[1]);
@@ -1175,7 +1185,7 @@ this._writePos = function(){
 			["weapon_position_port = "],
 			["weapon_position_starboard = "]
 		],s,ind,sep,j,k;
-	for(var i=1;i<w.length;i++){
+	for(var i=2;i<w.length;i++){
 		s = 0; ind = 0; sep = 0;
 		switch(w[i].n){
 			case "aft_eject_position": ind = 0; break;
