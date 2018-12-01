@@ -133,6 +133,7 @@ this.$finder = {
 	},
 	pageInd:0,
 	pagesMax:0,
+	noop: 0,
 	modelHead:{
 		choices:{ZYYB:"Back to main list"},
 		initialChoicesKey: null,
@@ -162,6 +163,7 @@ this.$finder = {
 	shaderLevel: 0,
 	sizeX: 0,
 	sizeY: 0,
+	sizeZ: 0,
 	sizeXInd: 1,
 	sizeYInd: 1,
 	sizes: [10,1,0.1,0.01],
@@ -285,14 +287,14 @@ this._extPosData = function(obj,id,wi){
 	if(typeof(obj)==="string"){
 		a = obj.replace(/\.\s{1,99}/g,".").replace(/\s{1,99}/g," ");
 		a = a.split(" ");
-		if(a.length===3) r.push({n:id,ind:0,pos:[a[0],a[1],a[2]],size:[0.1,0.1,0]});
+		if(a.length===3) r.push({n:id,ind:0,pos:[a[0],a[1],a[2]],size:[0.1,0.1,1]});
 		this.$finder.posInd[wi]++;
 	} else {
 		for(i=0;i<obj.length;i++){
 			a = obj[i].replace(/\.\s{1,99}/g,".").replace(/\s{1,99}/g," ");
 			a = a.split(" ");
-			if(a.length===3) r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[0,0,0]});
-			else r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[a[3],a[4],1]});
+			if(a.length===3) r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[0,0,1]});
+			else r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[a[3],a[4],a[5]]});
 			this.$finder.posInd[wi]++;
 		}
 	}
@@ -500,9 +502,10 @@ this._showModel = function(){
 		f = this.$finder;
 	mission.runScreen(head,this._modelChoices);
 	md = mission.displayModel;
-	md.orientation = f.modelOri;
-	if(f.modelCloseUp) md.position = [0,0,md.collisionRadius+f.modelCloseUps[f.modelCloseUpInd]];
-	if(md){
+	if(md && md.isValid){
+		f.noop = 0;
+		md.orientation = f.modelOri;
+		if(f.modelCloseUp) md.position = [0,0,md.collisionRadius+f.modelCloseUps[f.modelCloseUpInd]];
 		if(md.subEntities && md.subEntities.length){
 			var sub = md.subEntities.length;
 			while(sub){
@@ -558,16 +561,19 @@ this._showModel = function(){
 				else high[mki].textures = this.$posShader.textures;
 				high[mki].uniforms = this.$posShader.uniforms;
 				high[mki].uniforms.pos.value = f.shadePos;
-				high[mki].uniforms.size.value = [parseFloat(f.sizeX),parseFloat(f.sizeY),(parseFloat(f.sizeX)+parseFloat(f.sizeY))*0.5];
+				high[mki].uniforms.size.value = [parseFloat(f.sizeX),parseFloat(f.sizeY),Math.min(f.sizeZ,1.0)];
 				md.setMaterials(high,{});
 				xyz = f.shadePos;
 				for(i=0;i<xyz.length;i++) xyz[i] = this._aid.toPrec(xyz[i],4);
 				mission.addMessageText(f.shadePos);
-				mission.addMessageText("X:"+this._aid.toPrec(f.sizeX,4)+" Y:"+this._aid.toPrec(f.sizeY,4));
+				mission.addMessageText("X:"+this._aid.toPrec(f.sizeX,4)+" Y:"+this._aid.toPrec(f.sizeY,4)+" Z:"+this._aid.toPrec(f.sizeZ,4));
 				if(this.$storedPos[cdk] && this.$storedPos[cdk][f.shadePosInd]) mission.addMessageText(this.$storedPos[cdk][f.shadePosInd].n+":"+this.$storedPos[cdk][f.shadePosInd].ind);
 				mission.addMessageText("Dist: "+this._aid.toPrec(Vector3D(xyz).magnitude()/md.collisionRadius,4));
 				break;
 		}
+	} else {
+		f.noop = 1;
+		mission.addMessageText("No model. Maybe disallowed via condition script.");
 	}
 };
 this._parseMaterial = function(mat){
@@ -660,6 +666,12 @@ this._modelChoices = function(choice){
 	var tr,s,
 		c = this.$curMat,
 		f = this.$finder;
+	if(this.$finder.noop){
+		f.modelCurMod = null;
+		f.shadePosInd = 1;
+		this._showStart();
+		return;
+	}
 	this.$finder.modelHead.initialChoicesKey = choice;
 	switch(choice){
 		case "YYYA": // Next material
@@ -810,6 +822,7 @@ this._modelChoices = function(choice){
 			f.shadePos = this.$storedPos[c.dataKey][f.shadePosInd].pos;
 			f.sizeX = parseFloat(this.$storedPos[c.dataKey][f.shadePosInd].size[0]);
 			f.sizeY = parseFloat(this.$storedPos[c.dataKey][f.shadePosInd].size[1]);
+			f.sizeZ = parseFloat(this.$storedPos[c.dataKey][f.shadePosInd].size[2]);
 			s = 1;
 			break;
 		case "PSXA": // Increase X
@@ -1203,7 +1216,7 @@ this._writePos = function(){
 		}
 		if(sep && w[i].ind===1) pos[ind][0] += "(";
 		if(w[i].ind) pos[ind].push(",");
-		if(s) pos[ind].push("\""+w[i].pos[0]+" "+w[i].pos[1]+" "+w[i].pos[2]+" "+w[i].size[0]+" "+w[i].size[1]+" 1\"");
+		if(s) pos[ind].push("\""+w[i].pos[0]+" "+w[i].pos[1]+" "+w[i].pos[2]+" "+w[i].size[0]+" "+w[i].size[1]+" "+w[i].size[2]+"\"");
 		else pos[ind].push("\""+w[i].pos[0]+" "+w[i].pos[1]+" "+w[i].pos[2]+"\"");
 	}
 	pos[1].push(")");
