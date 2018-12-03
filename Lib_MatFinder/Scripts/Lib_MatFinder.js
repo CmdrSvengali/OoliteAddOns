@@ -97,13 +97,13 @@ this.$defsSub = {
 	weapon_energy: {def:25, typ:"number", use:"SubEnt", range:[0,100]},
 	weapon_range: {def:6000, typ:"number", use:"SubEnt", range:[0,7500]}
 };
-this.$defsEx = {
+this.$defsEx = { // unused yet
 	n: {def:"-", typ:"string", use:""},
 	ind: {def:0, typ:"number", use:""},
 	pos: {def:[0,0,0], typ:"array", use:"Pos"},
 	size: {def:[0,0,0], typ:"array", use:"Pos"}
 };
-this.$defMat = {};
+this.$defMat = {}; // Generated
 this.$posShader = {
 	vertex_shader: "Lib_MatFinder_pos.vs",
 	fragment_shader: "Lib_MatFinder_pos.fs",
@@ -153,7 +153,7 @@ this.$finder = {
 		y: {ind:1,val:[100,10,1,0.1,0.01]},
 		z: {ind:1,val:[100,10,1,0.1,0.01]}
 	},
-	oriAmount: {
+	oriAmount: { // unused yet
 		x: {ind:1,val:[90,10,1,0.1,0.01]},
 		y: {ind:1,val:[90,10,1,0.1,0.01]},
 		z: {ind:1,val:[90,10,1,0.1,0.01]}
@@ -270,7 +270,7 @@ this._getModelData = function(obj){
 this._getPosData = function(){
 	if(!this.$storedPos[this.$curMat.dataKey]){ // Get positions
 		var w = this.$finder.posNames,
-			o = [{n:"-",ind:0,pos:[0,0,0],size:[0,0,0]}],
+			o = [{n:"-",ind:0,pos:[0,0,0],size:[0,0,1]}],
 			wi, t;
 		this.$finder.posInd = [0,0,0,0,0,0,0,0,0,0,0,0];
 		for(var i=0;i<w.length;i++){
@@ -293,7 +293,7 @@ this._extPosData = function(obj,id,wi){
 		for(i=0;i<obj.length;i++){
 			a = obj[i].replace(/\.\s{1,99}/g,".").replace(/\s{1,99}/g," ");
 			a = a.split(" ");
-			if(a.length===3) r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[0,0,1]});
+			if(a.length===3) r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[0.1,0.1,1]});
 			else r.push({n:id,ind:i,pos:[a[0],a[1],a[2]],size:[a[3],a[4],a[5]]});
 			this.$finder.posInd[wi]++;
 		}
@@ -407,7 +407,7 @@ this._setModelHead = function(){
 				hc.YYYC = "Subentities: "+(!f.modelNoSub);
 				hc.YYYD = "Mode: "+f.modeNames[f.modeInd];
 				hc.YYYE = "Spin model: "+f.modelSpin;
-				hc.YYYF = "Closeup: "+(f.modelCloseUp?" :"+f.modelCloseUps[f.modelCloseUpInd]:"Off");
+				hc.YYYF = "Closeup: "+(f.modelCloseUp?""+f.modelCloseUps[f.modelCloseUpInd]:"Off");
 				hc.YYYG = "Next";
 				break;
 			case 1:
@@ -492,6 +492,15 @@ this._setModelHead = function(){
 	switch(f.mode){
 		case "Mat": break;
 		case "posShader": head.background = {name:"Lib_MatFinder_BG_Pos.png",height:512}; break;
+	}
+	head = this._alignChoices(head);
+	return head;
+};
+this._alignChoices = function(head){
+	var k = Object.keys(head.choices);
+	for(var i=0;i<k.length;i++){
+		if(typeof(head.choices[k[i]])==="string") head.choices[k[i]] = {text:head.choices[k[i]],alignment:"LEFT"};
+		else head.choices[k[i]].alignment = "LEFT";
 	}
 	return head;
 };
@@ -626,43 +635,21 @@ this._parseMaterial = function(mat){
 };
 this._displayMaterial = function(mat){
 	var i;
-	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.diffuse_map ? mat.diffuse_map : "-"),20," ")+
-		this._aid.scrToWidth(""+(mat.ambient_color ? mat.ambient_color : "-"),11,0,0,1));
-	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.emission_map ? mat.emission_map : "-"),20," ")+
-		this._aid.scrToWidth(""+(mat.diffuse_color ? mat.diffuse_color : "-"),11,0,0,1));
-	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.illumination_map ? mat.illumination_map : "-"),20," ")+
-		this._aid.scrToWidth(""+(mat.emission_color ? mat.emission_color : "-"),11,0,0,1));
-	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.emission_and_illumination_map ? mat.emission_and_illumination_map : "-"),20," ")+
-		this._aid.scrToWidth(""+(mat.emission_modulate_color ? mat.emission_modulate_color : "-"),11,0,0,1));
-	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.normal_map ? mat.normal_map : "-"),20," ")+
-		this._aid.scrToWidth(""+(mat.illumination_modulate_color ? mat.illumination_modulate_color : "-"),11,0,0,1));
-	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.normal_and_parallax_map ? mat.normal_and_parallax_map : "-"),20," ")+
-		this._aid.scrToWidth(""+(mat.specular_color ? mat.specular_color : "-"),11,0,0,1));
-	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.specular_map ? mat.specular_map : "-"),20," ")+
-		this._aid.scrToWidth(""+(mat.specular_modulate_color ? mat.specular_modulate_color : "-"),11,0,0,1));
-	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.gloss ? mat.gloss : "-"),20," ")+
-		this._aid.scrToWidth(""+(mat.parallax_bias ? mat.parallax_bias : "-"),11,0,0,1));
-	mission.addMessageText(
-		this._aid.scrToWidth(""+(mat.shininess ? mat.shininess : "-"),20," ")+
-		this._aid.scrToWidth(""+(mat.parallax_scale ? mat.parallax_scale : "-"),11,0,0,1));
+	this._display(mat.diffuse_map,mat.ambient_color);
+	this._display(mat.emission_map,mat.diffuse_color);
+	this._display(mat.illumination_map,mat.emission_color);
+	this._display(mat.emission_and_illumination_map,mat.emission_modulate_color);
+	this._display(mat.normal_map,mat.illumination_modulate_color);
+	this._display(mat.normal_and_parallax_map,mat.specular_color);
+	this._display(mat.specular_map,mat.specular_modulate_color);
+	this._display(mat.gloss,mat.parallax_bias);
+	this._display(mat.shininess,mat.parallax_scale);
 	if(this.$finder.mode==="Mat") for(i=0;i<mat.MTX.length;i++) mission.addMessageText(this._aid.scrToWidth(mat.MTX[i],22," "));
 };
+this._display = function(left,right){
+	mission.addMessageText(this._aid.scrToWidth(""+(left?left:"-"),20," ")+this._aid.scrToWidth(""+(right?right:"-"),11,0,0,1));
+};
 this._modelChoices = function(choice){
-/*
-	var md = mission.displayModel;
-	if(md){
-		if(md.position) log("","POS:"+mission.displayModel.position);
-		if(md.orientation) log("","ORI:"+mission.displayModel.orientation);
-	}
-*/
 	var tr,s,
 		c = this.$curMat,
 		f = this.$finder;
