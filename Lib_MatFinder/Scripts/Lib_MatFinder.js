@@ -531,8 +531,10 @@ this._showModel = function(){
 		}
 		if(mat){
 			matKeys = Object.keys(mat);
-			if(this.$storedMats[cdk]) mat = this._aid.objClone(this.$storedMats[cdk]);
-			else {
+			if(this.$storedMats[cdk]){
+				mat = this._aid.objClone(this.$storedMats[cdk]);
+				matKeys = Object.keys(mat);
+			} else {
 				for(i=0;i<matKeys.length;i++) mki = matKeys[i];
 				this.$storedMats[cdk] = mat;
 			}
@@ -941,6 +943,7 @@ this._valueChoices = function(choice){
 			}
 		} else {
 			delete this.$storedMats[dtk][min][this.$finder[mcm]];
+			if(mcm==="modelSet") clr = 1;
 		}
 	} else if(choice && choice!==""){
 		switch(mcm){
