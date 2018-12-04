@@ -172,7 +172,7 @@ this.$finder = {
 		"weapon_position_forward","weapon_position_port","weapon_position_starboard"
 	],
 	posInd: [0,0,0,0,0,0,0,0,0,0,0,0],
-	logCompact: false,
+	logCompact: false, // not exposed
 	modelNoSub: false,
 	modelHighlightActive: false,
 	modelSpin: true,
@@ -1174,36 +1174,18 @@ this._writeLog = function(mode){
 };
 this._writePos = function(){
 	var w = this.$storedPos[this.$curMat.dataKey], // array
-		pos = [
-			["aft_eject_position = "],
-			["exhaust = ("],
-			["missile_launch_position = "],
-			["scoop_position = "],
-			["view_position_aft = "],
-			["view_position_forward = "],
-			["view_position_port = "],
-			["view_position_starboard = "],
-			["weapon_position_aft = "],
-			["weapon_position_forward = "],
-			["weapon_position_port = "],
-			["weapon_position_starboard = "]
-		],s,ind,sep,j,k;
-	for(var i=2;i<w.length;i++){
-		s = 0; ind = 0; sep = 0;
-		switch(w[i].n){
-			case "aft_eject_position": ind = 0; break;
-			case "exhaust": s = 1; ind = 1; break;
-			case "missile_launch_position": ind = 2; break;
-			case "scoop_position": ind = 3; break;
-			case "view_position_aft": ind = 4; break;
-			case "view_position_forward": ind = 5; break;
-			case "view_position_port": ind = 6; break;
-			case "view_position_starboard": ind = 7; break;
-			case "weapon_position_aft": ind = 8; sep = 1; break;
-			case "weapon_position_forward": ind = 9; sep = 1; break;
-			case "weapon_position_port": ind = 10; sep = 1; break;
-			case "weapon_position_starboard": ind = 11; sep = 1; break;
-		}
+		pn = this.$finder.posNames,
+		pos = [],
+		i,s,ind,sep,j,k;
+	for(i=0;i<pn.length;i++){
+		if(pn[i]==="exhaust") pos.push([pn[i]+" = ("]);
+		else pos.push([pn[i]+" = "]);
+	}
+	for(i=2;i<w.length;i++){
+		s = 0; sep = 0;
+		ind = pn.indexOf(w[i].n);
+		if(w[i].n==="exhaust") s = 1;
+		if(w[i].n[0]==="w") sep = 1;
 		if(sep && w[i].ind===1) pos[ind][0] += "(";
 		if(w[i].ind) pos[ind].push(",");
 		if(s) pos[ind].push("\""+w[i].pos[0]+" "+w[i].pos[1]+" "+w[i].pos[2]+" "+w[i].size[0]+" "+w[i].size[1]+" "+w[i].size[2]+"\"");
