@@ -172,11 +172,13 @@ this.$finder = {
 		"weapon_position_forward","weapon_position_port","weapon_position_starboard"
 	],
 	posInd: [0,0,0,0,0,0,0,0,0,0,0,0],
+	posTest : false,
 	logCompact: false, // not exposed
 	modelNoSub: false,
 	modelHighlightActive: false,
 	modelSpin: true,
-	modelNoShade: true,
+	modelNoShade: true, // not exposed
+	modelShowOff: false,
 	modelCloseUp: false,
 	modelCloseUpInd: 0,
 	modelCloseUps: [0,10,30,50,100],
@@ -361,7 +363,7 @@ this._setModelHead = function(){
 		f = this.$finder,
 		hc = head.choices,
 		cmd = this.$curMat.dataKey,
-		mcm = f.modelCurMod;
+		mcm = f.modelCurMod,t;
 	head.title = "Model: "+cmd+" - M:"+c.matInd;
 	if(mcm) head.title += " "+f[mcm];
 	head.model = "["+cmd+"]";
@@ -382,6 +384,7 @@ this._setModelHead = function(){
 				break;
 			case "modelCol":
 				hc.YCCA = "Set color";
+				// Add color picker if we get a way to do it
 				hc.YCCB = "Clear color";
 				hc.YCCC = "Confirm";
 				break;
@@ -402,7 +405,11 @@ this._setModelHead = function(){
 		if(this.$storedMats[cmd] && Object.keys(this.$storedMats[cmd]).length>1) hc.YYYA = "Next material";
 		switch(f.modelCHCInd){
 			case 0:
-				if(f.mode==="posShader" && this.$storedPos[cmd] && this.$storedPos[cmd].length>1) hc.PSPS = "Cycle positions";
+				if(f.mode==="posShader" && this.$storedPos[cmd] && this.$storedPos[cmd].length>1){
+					hc.PSPS = "Cycle positions";
+					t = this.$storedPos[c.dataKey][f.shadePosInd];
+					if(t.n[0]==="v") hc.PSZT = "Test position: "+f.posTest;
+				}
 				hc.XXLG = "Write to Latest.log";
 				hc.YYYC = "Subentities: "+(!f.modelNoSub);
 				hc.YYYD = "Mode: "+f.modeNames[f.modeInd];
@@ -473,8 +480,16 @@ this._setModelHead = function(){
 				break;
 			case 5:
 				if(f.mode==="Mat"){
-					hc.GENM = "Generate new material";
-					hc.YHLM = "Hightlight material";
+					if(!f.modelShowOff){
+						hc.GENM = "Generate new material";
+						hc.YHLM = "Hightlight material";
+						hc.YYYG = "Next";
+					} else {
+						hc.MDSX = "X 10°";
+						hc.MDSY = "Y 10°";
+						hc.MDSZ = "Z 10°";
+					}
+					hc.MDSO = "Toggle Showtime";
 				}
 				if(f.mode==="posShader"){
 					hc.PSSA = "Increase Size X";
@@ -484,13 +499,15 @@ this._setModelHead = function(){
 					hc.PSSE = "Decrease Size Y";
 					hc.PSSF = "Amount Y: "+f.sizes[f.sizeYInd];
 					hc.PSSZ = "Reset Size";
+					hc.YYYG = "Next";
 				}
-				hc.YYYG = "Next";
 				break;
 		}
 	}
 	switch(f.mode){
-		case "Mat": break;
+		case "Mat":
+			if(f.modelShowOff) head.background = {name:"lib_bg.png",height:512};
+			break;
 		case "posShader": head.background = {name:"Lib_MatFinder_BG_Pos.png",height:512}; break;
 	}
 	head = this._alignChoices(head);
@@ -549,8 +566,10 @@ this._showModel = function(){
 		}
 		switch(f.mode){
 			case "Mat":
-				newMat = this._parseMaterial(mat[mki]);
-				this._displayMaterial(newMat);
+				if(!f.modelShowOff){
+					newMat = this._parseMaterial(mat[mki]);
+					this._displayMaterial(newMat);
+				}
 				if(f.modelNoShade){
 					if(mat[mki].vertex_shader) delete mat[mki].vertex_shader;
 					if(mat[mki].fragment_shader) delete mat[mki].fragment_shader;
@@ -580,12 +599,45 @@ this._showModel = function(){
 				mission.addMessageText("X:"+this._aid.toPrec(f.sizeX,4)+" Y:"+this._aid.toPrec(f.sizeY,4)+" Z:"+this._aid.toPrec(f.sizeZ,4));
 				if(this.$storedPos[cdk] && this.$storedPos[cdk][f.shadePosInd]) mission.addMessageText(this.$storedPos[cdk][f.shadePosInd].n+":"+this.$storedPos[cdk][f.shadePosInd].ind);
 				mission.addMessageText("Dist: "+this._aid.toPrec(Vector3D(xyz).magnitude()/md.collisionRadius,4));
+				mission.addMessageText("FOV: "+this._aid.toPrec(oolite.gameSettings.fovValue,4));
+				if(f.posTest) this._testView();
 				break;
 		}
 	} else {
 		f.noop = 1;
 		mission.addMessageText("No model. Maybe disallowed via condition script.");
 	}
+};
+this._testView = function(){
+	var what = this.$storedPos[this.$curMat.dataKey][this.$finder.shadePosInd],
+		o,t;
+	switch(what.n){
+		case "view_position_aft":
+			o = [0,0,1,0];
+			t = Vector3D(what.pos);
+			t.y *= -1.0;
+			break;
+		case "view_position_forward":
+			o = [1,0,0,0];
+			t = Vector3D(what.pos).multiply(-1);
+			break;
+		case "view_position_port":
+			o = [-1,0,1,0];
+			t = Vector3D([what.pos[2],what.pos[1],what.pos[0]]);
+			t.x *= -1.0;
+			t.y *= -1.0;
+			t.z += 3.0; // Hmm
+			break;
+		case "view_position_starboard":
+			o = [1,0,1,0];
+			t = Vector3D([what.pos[2],what.pos[1],what.pos[0]]);
+			t.y *= -1.0;
+			t.z *= -1.0;
+			t.z += 3.0; // Hmm
+			break;
+	}
+	if(t) mission.displayModel.position = t;
+	if(o) mission.displayModel.orientation = o;
 };
 this._parseMaterial = function(mat){
 	var c,t,nm={MTX:[]},df,nc;
@@ -652,7 +704,7 @@ this._display = function(left,right){
 	mission.addMessageText(this._aid.scrToWidth(""+(left?left:"-"),20," ")+this._aid.scrToWidth(""+(right?right:"-"),11,0,0,1));
 };
 this._modelChoices = function(choice){
-	var tr,s,
+	var tr,s,pt,
 		c = this.$curMat,
 		f = this.$finder;
 	if(this.$finder.noop){
@@ -661,7 +713,7 @@ this._modelChoices = function(choice){
 		this._showStart();
 		return;
 	}
-	this.$finder.modelHead.initialChoicesKey = choice;
+	f.modelHead.initialChoicesKey = choice;
 	switch(choice){
 		case "YYYA": // Next material
 			c.matInd++;
@@ -671,6 +723,7 @@ this._modelChoices = function(choice){
 		case "ZYYB": // Back
 			f.modelCurMod = null;
 			f.shadePosInd = 1;
+			f.modelShowOff = false;
 			this._showStart();
 			break;
 		case "YYYC": // Toggle subEntities
@@ -706,7 +759,23 @@ this._modelChoices = function(choice){
 			s = 1;
 			break;
 		case "YHLM": // Hightlight
-			this.$finder.modelHighlightActive = !this.$finder.modelHighlightActive;
+			f.modelHighlightActive = !f.modelHighlightActive;
+			s = 1;
+			break;
+		case "MDSO":
+			f.modelShowOff = !f.modelShowOff;
+			s = 1;
+			break;
+		case "MDSX": // X 10°
+			f.modelOri = mission.displayModel.orientation.rotateX(this._radians(10));
+			s = 1;
+			break;
+		case "MDSY": // Y 10°
+			f.modelOri = mission.displayModel.orientation.rotateY(this._radians(10));
+			s = 1;
+			break;
+		case "MDSZ": // Z 10°
+			f.modelOri = mission.displayModel.orientation.rotateZ(this._radians(10));
 			s = 1;
 			break;
 		case "GENM":
@@ -890,11 +959,18 @@ this._modelChoices = function(choice){
 			f.sizeY = 0;
 			s = 1;
 			break;
+		case "PSZT":
+			f.posTest = !f.posTest;
+			if(f.posTest) f.modelSpin = false;
+			s = 1;
+			pt = 1;
+			break;
 		default:
 			log(this.name,"Choice unhandled: "+choice);
 			this._showStart();
 	}
 	if(s) this._showModel();
+	if(!pt) f.posTest = false;
 };
 this._enterValue = function(){
 	var head = this._aid.objClone(this.$finder.pageHead),
