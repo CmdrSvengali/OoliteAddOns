@@ -1,7 +1,7 @@
 {
 	author = "Svengali";
 	category = "Misc";
-	description = "Helper to set and test materials entries and more.";
+	description = "Helper to set and test materials entries.";
 	identifier = "oolite.oxp.Svengali.Lib_MatFinder";
 	information_url = "";
 	license = "CC-by-nc-sa 4.0";

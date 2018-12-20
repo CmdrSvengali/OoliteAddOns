@@ -1,4 +1,5 @@
 {
+	LIB_MATFS_Search = "Enter your search token. Up to 24 entries will be shown.\n\nThe search is case-sensitive.\n\nLeave empty to return to base list.";
 	LIB_MATF_NOMAT = "This model doesn't have a materials definition,\nbut you can gererate a definition for it.\n\nAll you need to know is what the .dat file uses.";
 	LIB_MATF_NOMAT_UPD = "Writing the subentities to the logfile offers an easy way to update oldstyle declarations.";
 	LIB_MATF_GENMAT = "Enter the materials name.\n\nThe name must match the definition in the .dat file exactly.\nIf it doesn't, your generated material won't have any effect.\n\nIt's also necessary that the model has texture coordinates.\n\nLeave empty to return.";

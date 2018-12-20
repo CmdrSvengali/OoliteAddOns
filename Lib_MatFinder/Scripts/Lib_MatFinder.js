@@ -97,12 +97,6 @@ this.$defsSub = {
 	weapon_energy: {def:25, typ:"number", use:"SubEnt", range:[0,100]},
 	weapon_range: {def:6000, typ:"number", use:"SubEnt", range:[0,7500]}
 };
-this.$defsEx = { // unused yet
-	n: {def:"-", typ:"string", use:""},
-	ind: {def:0, typ:"number", use:""},
-	pos: {def:[0,0,0], typ:"array", use:"Pos"},
-	size: {def:[0,0,0], typ:"array", use:"Pos"}
-};
 this.$defMat = {}; // Generated
 this.$posShader = {
 	vertex_shader: "Lib_MatFinder_pos.vs",
@@ -153,11 +147,6 @@ this.$finder = {
 		y: {ind:1,val:[100,10,1,0.1,0.01]},
 		z: {ind:1,val:[100,10,1,0.1,0.01]}
 	},
-	oriAmount: { // unused yet
-		x: {ind:1,val:[90,10,1,0.1,0.01]},
-		y: {ind:1,val:[90,10,1,0.1,0.01]},
-		z: {ind:1,val:[90,10,1,0.1,0.01]}
-	},
 	shadePos: [0,0,0],
 	shadePosInd: 1,
 	shaderLevel: 0,
@@ -204,7 +193,7 @@ this.startUpComplete = function(){
 	this.$dataKeys = worldScripts.Lib_Main._lib.$ships;
 	this.$finder.shaderLevel = this._aid.ooShaders();
 	this._addInterface();
-	this.$finder.pagesMax = Math.ceil(this.$dataKeys.length/24);
+	this.$finder.pagesMax = Math.ceil(this.$dataKeys.length/23);
 	worldScripts.Lib_GUI.$IDRules.Lib_MatFinder = {mus:1};
 };
 this.shipDockedWithStation = function(){
@@ -225,7 +214,8 @@ this._showStart = function(id){
 	player.ship.hudHidden = true;
 	var c={},o=this._aid.objClone(f.pageHead);
 	o.exitScreen = "GUI_SCREEN_INTERFACES";
-	for(var i=f.pageInd*24;i<f.pageInd*24+24;i++) if(this.$dataKeys.length>i+1) c[this.$dataKeys[i]] = this.$dataKeys[i];
+	o.choices.ZZZS = "Search for entity";
+	for(var i=f.pageInd*23;i<f.pageInd*23+23;i++) if(this.$dataKeys.length>i+1) c[this.$dataKeys[i]] = this.$dataKeys[i];
 	o.choices = this._aid.objMerge(c,o.choices);
 	o.title += " ("+(f.pageInd+1)+"/"+f.pagesMax+")";
 	mission.runScreen(o,this._pageChoices);
@@ -238,8 +228,56 @@ this._pageChoices = function(choice){
 			if(this.$finder.pageInd>=this.$finder.pagesMax) this.$finder.pageInd = 0;
 			this._showStart();
 			break;
+		case "ZZZS":
+			this._entitySearch();
+			break;
 		case "ZZZZ":
 			player.ship.hudHidden = this.$finder.hud;
+			break;
+		default:
+			this.$curMat.matInd = 0;
+			this._getModelData(choice);
+	}
+};
+this._entitySearch = function(){
+	var o = this._aid.objClone(this.$finder.pageHead);
+	o.messageKey = "LIB_MATFS_Search";
+	o.textEntry = true;
+	mission.runScreen(o,this._entitySearchChoices);
+};
+this._entitySearchChoices = function(choice){
+	if(choice){
+		var o = this._aid.objClone(this.$finder.pageHead),
+			a = this.$dataKeys,
+			l = a.length,
+			s = new RegExp(choice),
+			i,
+			res = [];
+		o.choices = {};
+		for(i=0;i<l;i++){
+			if(s.test(a[i])) res.push(a[i]);
+			if(res.length>23) break;
+		}
+		if(res.length){
+			for(i=0;i<24;i++){
+				if(res.length>i) o.choices[res[i]] = res[i];
+				else o.choices["ZZZA"+i] = {text:" ",unselectable:true};
+			}
+		}
+		if(!res.length) o.message = "Nothing found.";
+		o.choices.ZZZA = {text:" ",unselectable:true};
+		o.choices.ZZZR = "Back to main list";
+		o.choices.ZZZS = "Search for entity";
+		mission.runScreen(o,this._entitySearchRes);
+	} else this._showStart();
+};
+this._entitySearchRes = function(choice){
+	switch(choice){
+		case "ZZZS":
+			this._entitySearch();
+			break;
+		case "ZZZR":
+			this._showStart();
 			break;
 		default:
 			this.$curMat.matInd = 0;
@@ -608,6 +646,7 @@ this._showModel = function(){
 		mission.addMessageText("No model. Maybe disallowed via condition script.");
 	}
 };
+// Can't replicate Oolites offsets (no vertex data)
 this._testView = function(){
 	var what = this.$storedPos[this.$curMat.dataKey][this.$finder.shadePosInd],
 		o,t;
@@ -1275,8 +1314,8 @@ this._writePos = function(){
 	log(this.name,"Entry for "+this.$curMat.dataKey+":");
 	for(k=0;k<12;k++) if((k!==1 && pos[k].length>2) || (k===1 && pos[k].length>3)) log(this.name,pos[k].join(""));
 };
-// Convert degrees to radians.
+// Degrees to radians. Precision is not high enough.
 this._radians = function(degrees){return degrees*Math.PI/180;}; 
-// Convert radians to degrees.
+// Radians to degrees. Precision is not high enough.
 this._degrees = function(radians){return radians*180/Math.PI;};
 }).call(this);
